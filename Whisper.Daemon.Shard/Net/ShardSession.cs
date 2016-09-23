@@ -18,10 +18,13 @@
 
 using log4net;
 using System;
+using System.Numerics;
 using Whisper.Daemon.Shard.Lookup;
 using Whisper.Daemon.Shard.Security;
+using Whisper.Game.Characters;
 using Whisper.Shared.Net;
 using Whisper.Shared.Utility;
+using SuperSocket.SocketBase;
 
 namespace Whisper.Daemon.Shard.Net
 {
@@ -29,13 +32,19 @@ namespace Whisper.Daemon.Shard.Net
     {
         private readonly ILog log = LogManager.GetLogger(typeof(ShardSession));
         private readonly ILog packetLog = LogManager.GetLogger("PacketLog");
-
+        
+        /// <summary>
+        /// Creates a new instance of the ShardSession class.
+        /// </summary>
         public ShardSession() : base(SessionStatus.Connected)
         {
             Cipher = new PacketCipher();
             AccountID = -1;
         }
 
+        /// <summary>
+        /// Gets a reference to the ShardServer that owns this session.
+        /// </summary>
         public ShardServer Server
         {
             get
@@ -43,25 +52,56 @@ namespace Whisper.Daemon.Shard.Net
                 return (ShardServer)AppServer;
             }
         }
-
+        
+        /// <summary>
+        /// This cipher is used to encrypt and decrypt the headers of all packets sent and received by this session.
+        /// </summary>
         public PacketCipher Cipher
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// This is a random integer used as a nonce during the client-shardserver authentication scheme.
+        /// </summary>
         public int Seed
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// If this session has a Status of SessionStatus.Authenticated or SessionStatus.Ingame, then this will get the account ID of the authenticated account. Otherwise, it returns -1.
+        /// </summary>
         public int AccountID
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// If this session has a Status of SessionStatus.Ingame, then this will get the Character object representing the logged-in player. Otherwise, it returns null.
+        /// </summary>
+        public Character Player
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Initializes the cipher that encrypts and decrypts packet headers.
+        /// </summary>
+        /// <param name="sessionKey">A BigInteger object representing the session key agreed by client and server during authentication.</param>
+        public void InitializeCipher(BigInteger sessionKey)
+        {
+            Cipher.Initialize(sessionKey);
+        }
+
+        /// <summary>
+        /// Sends the specified ArraySegment as a packet to the client.
+        /// </summary>
+        /// <param name="segment">packet</param>
         public override void Send(ArraySegment<byte> segment)
         {
             if (packetLog.IsInfoEnabled && segment.Count >= 4)
@@ -80,22 +120,43 @@ namespace Whisper.Daemon.Shard.Net
             base.Send(segment);
         }
 
-        public override void Send(byte[] data, int offset, int length)
+        /// <summary>
+        /// Sends a segment of the specified byte array as a packet to the client.
+        /// </summary>
+        /// <param name="data">buffer</param>
+        /// <param name="offset">offset into buffer from which to start sending</param>
+        /// <param name="length">number of bytes to send</param>
+        public sealed override void Send(byte[] data, int offset, int length)
         {
             Send(new ArraySegment<byte>(data, offset, length));
         }
 
-        public virtual void Send(ShardServerOpcode opcode, ByteBuffer packet)
+        /// <summary>
+        /// Sends a packet to the client constructed by prepending the size and opcode to a provided ByteBuffer.
+        /// </summary>
+        /// <param name="opcode">opcode</param>
+        /// <param name="packet">packet contents</param>
+        public void Send(ShardServerOpcode opcode, ByteBuffer packet)
         {
             Send(opcode, packet.GetBytes());
         }
 
-        public virtual void Send(ShardServerOpcode opcode, byte responseCode)
+        /// <summary>
+        /// Sends a packet to the client constructed of an opcode and a single byte of packet data. Frequently useful for failure response codes.
+        /// </summary>
+        /// <param name="opcode">opcode</param>
+        /// <param name="responseCode">packet contents</param>
+        public void Send(ShardServerOpcode opcode, byte responseCode)
         {
             Send(opcode, new byte[] { responseCode });
         }
 
-        public virtual void Send(ShardServerOpcode opcode, byte[] packet)
+        /// <summary>
+        /// Sends a packet to the client constructed by prepending the size and opcode to a provided byte array.
+        /// </summary>
+        /// <param name="opcode">opcode</param>
+        /// <param name="packet">packet contents</param>
+        public void Send(ShardServerOpcode opcode, byte[] packet)
         {
             using (ByteBuffer output = new ByteBuffer())
             {
@@ -125,6 +186,20 @@ namespace Whisper.Daemon.Shard.Net
                 
                 Send(ShardServerOpcode.AuthChallenge, packet);
             }
+        }
+
+        protected override void OnSessionClosed(CloseReason reason)
+        {
+            if(Status == SessionStatus.Ingame)
+            {
+                log.DebugFormat("session closing and status is {0}, so removing player {1} from shard", SessionStatus.Ingame, Player);
+
+                Server.Shard.RemoveCharacter(Player);
+                Status = SessionStatus.None;
+                Player = null;
+            }
+
+            base.OnSessionClosed(reason);
         }
     }
 }

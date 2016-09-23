@@ -65,6 +65,11 @@ namespace Whisper.Game.Characters
             private set;
         }
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         public uint GetFieldUnsigned(CharacterFields field)
         {
             return GetFieldUnsigned((ushort)field);

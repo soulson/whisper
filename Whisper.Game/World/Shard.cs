@@ -16,10 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Whisper.Game.Characters;
+using Whisper.Game.Objects;
+using Whisper.Game.Units;
 
 namespace Whisper.Game.World
 {
@@ -29,5 +33,81 @@ namespace Whisper.Game.World
     /// <seealso cref="Whisper.Game.World.World"/>
     public class Shard
     {
+        private readonly ILog log = LogManager.GetLogger(typeof(Shard));
+
+        /// <summary>
+        /// Initializes a new instance of the Shard class.
+        /// </summary>
+        public Shard()
+        {
+            GameObjects = new List<GameObject>();
+            Units = new List<Unit>();
+            Characters = new List<Character>();
+        }
+
+        protected IList<GameObject> GameObjects
+        {
+            get;
+            private set;
+        }
+
+        protected IList<Unit> Units
+        {
+            get;
+            private set;
+        }
+
+        protected IList<Character> Characters
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Adds a Character to the Shard.
+        /// </summary>
+        /// <param name="character">character to add</param>
+        public void AddCharacter(Character character)
+        {
+            if (character == null)
+                throw new ArgumentNullException(nameof(character), nameof(AddCharacter));
+
+            Characters.Add(character);
+            log.DebugFormat("added character {0} to shard", character);
+        }
+
+        /// <summary>
+        /// Gets a Character by name, or null if that Character is not online.
+        /// </summary>
+        /// <param name="name">character name</param>
+        /// <returns>character with given name or null</returns>
+        public Character GetCharacter(string name)
+        {
+            foreach(Character c in Characters)
+            {
+                if (c.Name == name)
+                    return c;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Removes a Character from the Shard.
+        /// </summary>
+        /// <param name="character">character to remove</param>
+        public void RemoveCharacter(Character character)
+        {
+            if(character == null)
+            {
+                log.Warn("Shard.RemoveCharacter called with null argument");
+                return;
+            }
+
+            if (Characters.Remove(character))
+                log.DebugFormat("character {0} removed from shard", character);
+            else
+                log.WarnFormat("Shard.RemoveCharacter cannot find character {0} to remove it", character);
+        }
     }
 }

@@ -181,7 +181,7 @@ namespace Whisper.Daemon.Shard.Commands
             }
 
             // trigger cinematic
-            session.Send(ShardServerOpcode.TriggerCinematic, BitConverter.GetBytes(0x00000051));
+            //session.Send(ShardServerOpcode.TriggerCinematic, BitConverter.GetBytes(0x00000051));
 
             // send object state
             using (ByteBuffer packet = new ByteBuffer())
@@ -200,7 +200,9 @@ namespace Whisper.Daemon.Shard.Commands
             session.Send(ShardServerOpcode.FriendList, (byte)0);
             session.Send(ShardServerOpcode.IgnoreList, (byte)0);
 
-            // set session status to ingame
+            // set session status to ingame and add the player to the Shard
+            session.Player = player;
+            session.Server.Shard.AddCharacter(player);
             session.Status = SessionStatus.Ingame;
 
             // initialize world state

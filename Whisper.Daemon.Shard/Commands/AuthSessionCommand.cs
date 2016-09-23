@@ -88,7 +88,7 @@ namespace Whisper.Daemon.Shard.Commands
             {
                 // no identity match
                 log.DebugFormat("account {0} not found. sending {1} response", identity, AuthResponse.UnknownAccount);
-                session.Send(ShardServerOpcode.AuthResponse, new byte[] { (byte)AuthResponse.UnknownAccount });
+                session.Send(ShardServerOpcode.AuthResponse, (byte)AuthResponse.UnknownAccount);
                 return;
             }
 
@@ -115,7 +115,7 @@ namespace Whisper.Daemon.Shard.Commands
 
                     session.AccountID = accountId;
                     session.Status = SessionStatus.Authenticated;
-                    session.Cipher.Initialize(sessionKeyInt);
+                    session.InitializeCipher(sessionKeyInt);
 
                     using (ByteBuffer authPacket = new ByteBuffer())
                     {
@@ -134,7 +134,7 @@ namespace Whisper.Daemon.Shard.Commands
                 {
                     // digest mismatch
                     log.DebugFormat("client digest did not match server digest for account {0}. sending {1} response", identity, AuthResponse.Failed);
-                    session.Send(ShardServerOpcode.AuthResponse, new byte[] { (byte)AuthResponse.Failed });
+                    session.Send(ShardServerOpcode.AuthResponse, (byte)AuthResponse.Failed);
                     return;
                 }
             }
