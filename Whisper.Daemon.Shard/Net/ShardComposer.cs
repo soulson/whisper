@@ -59,7 +59,7 @@ namespace Whisper.Daemon.Shard.Net
         protected override ShardRequest GenerateRequestForUnimplementedOpcode(ShardClientOpcode opcode)
         {
             // log it and return a no-op
-            log.WarnFormat("received unimplemented opcode {0}", opcode);
+            log.WarnFormat("received unimplemented opcode 0x{0:x4}", (ushort)opcode);
             return new ShardRequest(ShardClientOpcode.Noop, new byte[Marshal.SizeOf<ClientPacketHeader>()]);
         }
 
