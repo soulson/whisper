@@ -63,14 +63,17 @@ namespace Whisper.Daemon.Shard.Lookup
         SpellFailure = 0x0133,
         SpellCooldown = 0x0134,
         BindPointUpdate = 0x0155,
+        QueryTime = 0x01cf,
         Pong = 0x01dd,
         AuthChallenge = 0x01ec,
         AuthResponse = 0x01ee,
         ObjectUpdateCompressed = 0x01f6,
         AccountDataTimes = 0x0209,
+        SupportTicketQuery = 0x0212,
         LoginSetRestStart = 0x021e,
         LoginVerifyWorld = 0x0236,
         InitializeWorldState = 0x02c2,
+        QueryRaidInfo = 0x02cc,
         AddonInfo = 0x02ef,
     }
 }

@@ -51,5 +51,8 @@ namespace Whisper.Daemon.Shard.Lookup
         Ping = 0x01dc,
         AuthSession = 0x01ed,
         AccountDataUpdate = 0x020b,
+        SupportTicketQuery = 0x0211,
+        SetControlledUnit = 0x026a,
+        QueryRaidInfo = 0x02cd,
     }
 }

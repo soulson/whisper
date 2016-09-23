@@ -101,6 +101,9 @@
     <Compile Include="Commands\PingCommand.cs" />
     <Compile Include="Commands\PlayerLoginCommand.cs" />
     <Compile Include="Commands\QueryNameCommand.cs" />
+    <Compile Include="Commands\QueryRaidInfoCommand.cs" />
+    <Compile Include="Commands\SetControlledUnitCommand.cs" />
+    <Compile Include="Commands\SupportTicketQueryCommand.cs" />
     <Compile Include="Config\ShardConfig.cs" />
     <Compile Include="Database\CharacterDao.cs" />
     <Compile Include="Lookup\AuthResponse.cs" />

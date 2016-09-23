@@ -32,6 +32,7 @@ namespace Whisper.Daemon.Shard.Net
     {
         private readonly ILog log = LogManager.GetLogger(typeof(ShardSession));
         private readonly ILog packetLog = LogManager.GetLogger("PacketLog");
+        private readonly DateTime Epoch = new DateTime(1970, 1, 1);
         
         /// <summary>
         /// Creates a new instance of the ShardSession class.
@@ -96,6 +97,15 @@ namespace Whisper.Daemon.Shard.Net
         public void InitializeCipher(BigInteger sessionKey)
         {
             Cipher.Initialize(sessionKey);
+        }
+
+        /// <summary>
+        /// Sends a QueryTime packet to the client with the current result of time(null) as its payload.
+        /// </summary>
+        public void SendQueryTimePacket()
+        {
+            uint time = (uint)((DateTime.Now - Epoch).Ticks / 1000);
+            Send(ShardServerOpcode.QueryTime, BitConverter.GetBytes(time));
         }
 
         /// <summary>
