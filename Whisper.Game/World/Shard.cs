@@ -93,6 +93,22 @@ namespace Whisper.Game.World
         }
 
         /// <summary>
+        /// Gets a Character by ObjectID, or null if that Character is not online.
+        /// </summary>
+        /// <param name="id">character id</param>
+        /// <returns>character with given id or null</returns>
+        public Character GetCharacter(ObjectID id)
+        {
+            foreach (Character c in Characters)
+            {
+                if (c.ID == id)
+                    return c;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Removes a Character from the Shard.
         /// </summary>
         /// <param name="character">character to remove</param>

@@ -41,6 +41,24 @@ namespace Whisper.Game.Characters
             private set;
         }
 
+        public CharacterRace Race
+        {
+            get;
+            set;
+        }
+
+        public CharacterClass Class
+        {
+            get;
+            set;
+        }
+
+        public CharacterSex Sex
+        {
+            get;
+            set;
+        }
+
         public int ZoneID
         {
             get;

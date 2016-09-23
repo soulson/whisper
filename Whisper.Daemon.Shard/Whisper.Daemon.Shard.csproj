@@ -100,6 +100,7 @@
     <Compile Include="Commands\NoopCommand.cs" />
     <Compile Include="Commands\PingCommand.cs" />
     <Compile Include="Commands\PlayerLoginCommand.cs" />
+    <Compile Include="Commands\QueryNameCommand.cs" />
     <Compile Include="Config\ShardConfig.cs" />
     <Compile Include="Database\CharacterDao.cs" />
     <Compile Include="Lookup\AuthResponse.cs" />

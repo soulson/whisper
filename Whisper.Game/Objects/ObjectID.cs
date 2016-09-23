@@ -109,6 +109,31 @@ namespace Whisper.Game.Objects
             return String.Format("0x{0:x16}", id);
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+            else if (obj.GetType().Equals(GetType()))
+                return this == (ObjectID)obj;
+            else
+                return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return ID ^ ((int)ObjectType >> 32);
+        }
+
+        public static bool operator == (ObjectID left, ObjectID right)
+        {
+            return left.id == right.id;
+        }
+
+        public static bool operator != (ObjectID left, ObjectID right)
+        {
+            return !(left == right);
+        }
+
         public enum Type : ulong
         {
             Item = 0x4000000000000000,

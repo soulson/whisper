@@ -22,11 +22,14 @@ using Whisper.Game.Objects;
 using Whisper.Game.Characters;
 using Whisper.Shared.Database;
 using Whisper.Shared.Math;
+using log4net;
 
 namespace Whisper.Daemon.Shard.Database
 {
     public class CharacterDao
     {
+        private readonly ILog log = LogManager.GetLogger(typeof(CharacterDao));
+
         public Character GetCharacterByID(IWhisperDatasource wshard, ObjectID characterId)
         {
             if (characterId.ObjectType != ObjectID.Type.Player)
@@ -55,6 +58,24 @@ namespace Whisper.Daemon.Shard.Database
                     character.Position = new OrientedVector3(result.GetFloat(12), result.GetFloat(13), result.GetFloat(14), result.GetFloat(15));
                     character.MapID = result.GetInt32(16);
                     character.ZoneID = result.GetInt32(17);
+
+                    CharacterRace raceEnum;
+                    if (Enum.TryParse(result.GetByte(1).ToString(), out raceEnum))
+                        character.Race = raceEnum;
+                    else
+                        throw new ArgumentException(string.Format("cannot load character with invalid race {0}", result.GetByte(1)));
+
+                    CharacterClass classEnum;
+                    if (Enum.TryParse(result.GetByte(2).ToString(), out classEnum))
+                        character.Class = classEnum;
+                    else
+                        throw new ArgumentException(string.Format("cannot load character with invalid class {0}", result.GetByte(2)));
+
+                    CharacterSex sexEnum;
+                    if (Enum.TryParse(result.GetByte(3).ToString(), out sexEnum))
+                        character.Sex = sexEnum;
+                    else
+                        throw new ArgumentException(string.Format("cannot load character with invalid sex {0}", result.GetByte(3)));
 
                     return character;
                 }
