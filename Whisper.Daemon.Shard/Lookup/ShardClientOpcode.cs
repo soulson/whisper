@@ -48,6 +48,7 @@ namespace Whisper.Daemon.Shard.Lookup
         FriendList = 0x0066,
         FriendAdd = 0x0069,
         FriendDelete = 0x006a,
+        QueryTime = 0x01ce,
         Ping = 0x01dc,
         AuthSession = 0x01ed,
         AccountDataUpdate = 0x020b,

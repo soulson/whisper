@@ -102,6 +102,7 @@
     <Compile Include="Commands\PlayerLoginCommand.cs" />
     <Compile Include="Commands\QueryNameCommand.cs" />
     <Compile Include="Commands\QueryRaidInfoCommand.cs" />
+    <Compile Include="Commands\QueryTimeCommand.cs" />
     <Compile Include="Commands\SetControlledUnitCommand.cs" />
     <Compile Include="Commands\SupportTicketQueryCommand.cs" />
     <Compile Include="Config\ShardConfig.cs" />
