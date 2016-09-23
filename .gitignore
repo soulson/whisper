@@ -1,0 +1,14 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Whisper/v14
+/packages
+/Whisper.Daemon.Auth/bin
+/Whisper.Daemon.Auth/obj
+/Whisper.Daemon.Shard/bin
+/Whisper.Daemon.Shard/obj
+/Whisper.Game/bin
+/Whisper.Game/obj
+/Whisper.Shared/bin
+/Whisper.Shared/obj
