@@ -69,7 +69,8 @@
     <Compile Include="Units\MovementSpeed.cs" />
     <Compile Include="Units\Unit.cs" />
     <Compile Include="Units\UnitFields.cs" />
-    <Compile Include="World\WorldStore.cs" />
+    <Compile Include="World\Shard.cs" />
+    <Compile Include="World\World.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Whisper.Shared\Whisper.Shared.csproj">

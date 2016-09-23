@@ -61,9 +61,10 @@ namespace Whisper.Daemon.Shard
                     .DependsOn(Dependency.OnValue("wshard", new Datasource(config.ShardDatabaseAddress, config.ShardDatabasePort, config.ShardDatabaseName, config.ShardDatabaseUser, config.ShardDatabasePassword)))
                 );
 
-                container.Register(Component.For<WorldStore>()
+                container.Register(Component.For<World>()
                     .DependsOn(Dependency.OnValue("wworld", new Datasource(config.WorldDatabaseAddress, config.WorldDatabasePort, config.WorldDatabaseName, config.WorldDatabaseUser, config.WorldDatabasePassword)))
                 );
+                container.Register(Component.For<Game.World.Shard>());
 
                 ServerConfig serverConfig = new ServerConfig();
                 serverConfig.Ip = config.ShardDaemonBindAddress;

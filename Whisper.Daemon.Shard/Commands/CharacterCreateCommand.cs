@@ -97,7 +97,7 @@ namespace Whisper.Daemon.Shard.Commands
 
             try
             {
-                template = session.Server.WorldStore.CharacterTemplates[raceEnum][classEnum];
+                template = session.Server.World.CharacterTemplates[raceEnum][classEnum];
             }
             catch (KeyNotFoundException)
             {

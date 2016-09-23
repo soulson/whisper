@@ -30,13 +30,14 @@ namespace Whisper.Daemon.Shard.Net
     {
         private readonly ILog log = LogManager.GetLogger(typeof(ShardServer));
 
-        public ShardServer(IWhisperComposerFactory<ShardRequest> composerFactory, IRandomSource randomSource, IWhisperDatasource wauth, IWhisperDatasource wshard, WorldStore worldStore, ShardConfig configuration) : base(composerFactory)
+        public ShardServer(IWhisperComposerFactory<ShardRequest> composerFactory, IRandomSource randomSource, IWhisperDatasource wauth, IWhisperDatasource wshard, World world, Game.World.Shard shard, ShardConfig configuration) : base(composerFactory)
         {
             AppConfig = configuration;
             SecureRandom = randomSource;
             AuthDB = wauth;
             ShardDB = wshard;
-            WorldStore = worldStore;
+            World = world;
+            Shard = shard;
         }
 
         public IWhisperDatasource AuthDB
@@ -63,7 +64,13 @@ namespace Whisper.Daemon.Shard.Net
             private set;
         }
 
-        public WorldStore WorldStore
+        public World World
+        {
+            get;
+            private set;
+        }
+
+        public Game.World.Shard Shard
         {
             get;
             private set;

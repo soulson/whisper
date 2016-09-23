@@ -25,13 +25,20 @@ using log4net;
 namespace Whisper.Game.World
 {
     /// <summary>
-    /// Permanently stores static data about the game world.
+    /// Instances of this class permanently store static data about the game world.
+    /// It is expected that clients will make use of it as a singleton, although this is not enforced.
+    /// Individual instances of dynamic shards using this World as a template are represented by the Shard class.
     /// </summary>
-    public sealed class WorldStore
+    /// <seealso cref="Whisper.Game.World.Shard"/>
+    public class World
     {
-        private readonly ILog log = LogManager.GetLogger(typeof(WorldStore));
+        private readonly ILog log = LogManager.GetLogger(typeof(World));
 
-        public WorldStore(IWhisperDatasource wworld)
+        /// <summary>
+        /// Initializes a new instance of the World class, loading and caching its contents from the provided datasource.
+        /// </summary>
+        /// <param name="wworld">A datasource to a static world database. Needs read access only. The SQL used to initialize this database is located under Whisper.Daemon.Shard.SQL.World.</param>
+        public World(IWhisperDatasource wworld)
         {
             LoadCharacterTemplates(wworld);
         }
@@ -79,6 +86,9 @@ namespace Whisper.Game.World
             });
         }
         
+        /// <summary>
+        /// Gets a mapping from CharacterRace and CharacterClass to a CharacterTemplate describing the starting state for characters of that race and class.
+        /// </summary>
         public IDictionary<CharacterRace, IDictionary<CharacterClass, CharacterTemplate>> CharacterTemplates
         {
             get;
