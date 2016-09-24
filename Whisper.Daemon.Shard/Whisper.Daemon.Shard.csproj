@@ -101,6 +101,7 @@
     <Compile Include="Commands\PingCommand.cs" />
     <Compile Include="Commands\PlayerLoginCommand.cs" />
     <Compile Include="Commands\QueryNameCommand.cs" />
+    <Compile Include="Commands\QueryNextMailTime.cs" />
     <Compile Include="Commands\QueryRaidInfoCommand.cs" />
     <Compile Include="Commands\QueryTimeCommand.cs" />
     <Compile Include="Commands\SetControlledUnitCommand.cs" />

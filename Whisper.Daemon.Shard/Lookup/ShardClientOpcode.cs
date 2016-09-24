@@ -54,6 +54,8 @@ namespace Whisper.Daemon.Shard.Lookup
         AccountDataUpdate = 0x020b,
         SupportTicketQuery = 0x0211,
         SetControlledUnit = 0x026a,
+        QueryNextMailTime = 0x284,
         QueryRaidInfo = 0x02cd,
+        BattlefieldStatus = 0x02d3,
     }
 }
