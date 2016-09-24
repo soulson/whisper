@@ -95,6 +95,7 @@
     <Compile Include="CLI\ShardConsole.cs" />
     <Compile Include="Commands\AccountDataUpdateCommand.cs" />
     <Compile Include="Commands\AuthSessionCommand.cs" />
+    <Compile Include="Commands\BattlefieldStatusCommand.cs" />
     <Compile Include="Commands\CharacterCreateCommand.cs" />
     <Compile Include="Commands\CharacterListCommand.cs" />
     <Compile Include="Commands\NoopCommand.cs" />
