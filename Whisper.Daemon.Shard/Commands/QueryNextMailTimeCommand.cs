@@ -23,7 +23,7 @@ using Whisper.Shared.Utility;
 
 namespace Whisper.Daemon.Shard.Commands
 {
-    public sealed class QueryNextMailTime : ShardCommandBase<ClientPacketHeader>
+    public sealed class QueryNextMailTimeCommand : ShardCommandBase<ClientPacketHeader>
     {
         // where have i seen this number before?
         private const float NoUnreadMail = -86400.0f;
