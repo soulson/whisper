@@ -46,10 +46,10 @@ namespace Whisper.Daemon.Auth.Net
             }
         }
 
-        protected override AuthRequest GenerateRequestForUnimplementedOpcode(AuthRequestOpcode opcode)
+        protected override AuthRequestOpcode GetUnimplementedOpcodeSubstitute(AuthRequestOpcode unimplementedOpcode)
         {
             // auth requests don't have a no-op, and we can fully implement this opcode set, so kill the session if we get something weird
-            throw new NotImplementedException("received unimplemented opcode " + opcode);
+            throw new NotImplementedException("received unimplemented opcode " + unimplementedOpcode);
         }
     }
 }

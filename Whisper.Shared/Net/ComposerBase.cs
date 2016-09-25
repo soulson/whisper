@@ -76,8 +76,7 @@ namespace Whisper.Shared.Net
             }
             catch (KeyNotFoundException)
             {
-                rest = 0; // HACK: this assumes that the client only sent one packet by the time we got here
-                return GenerateRequestForUnimplementedOpcode(opcode);
+                command = commandDictionary[GetUnimplementedOpcodeSubstitute(opcode).ToString()];
             }
 
             int size = command.GetPacketSize(new ArraySegment<byte>(readBuffer, offset, length));
@@ -93,7 +92,7 @@ namespace Whisper.Shared.Net
             return requestFactory.CreateRequest(opcode, packet);
         }
 
-        protected abstract TRequest GenerateRequestForUnimplementedOpcode(TOpcode opcode);
+        protected abstract TOpcode GetUnimplementedOpcodeSubstitute(TOpcode unimplementedOpcode);
 
         // in bytes
         public abstract int OpcodeSize

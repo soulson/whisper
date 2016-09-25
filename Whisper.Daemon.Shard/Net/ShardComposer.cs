@@ -56,11 +56,11 @@ namespace Whisper.Daemon.Shard.Net
             return base.Filter(readBuffer, offset, length, toBeCopied, out rest);
         }
 
-        protected override ShardRequest GenerateRequestForUnimplementedOpcode(ShardClientOpcode opcode)
+        protected override ShardClientOpcode GetUnimplementedOpcodeSubstitute(ShardClientOpcode unimplementedOpcode)
         {
             // log it and return a no-op
-            log.WarnFormat("received unimplemented opcode 0x{0:x4}", (ushort)opcode);
-            return new ShardRequest(ShardClientOpcode.Noop, new byte[Marshal.SizeOf<ClientPacketHeader>()]);
+            log.WarnFormat("received unimplemented opcode 0x{0:x4}", (ushort)unimplementedOpcode);
+            return ShardClientOpcode.Noop;
         }
 
         public override int OpcodeSize
