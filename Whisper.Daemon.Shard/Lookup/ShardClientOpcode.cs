@@ -57,6 +57,7 @@ namespace Whisper.Daemon.Shard.Lookup
         QueryNextMailTime = 0x284,
         MeetingStoneInfo = 0x0296,
         QueryRaidInfo = 0x02cd,
+        MoveTimeSkipped = 0x02ce,
         BattlefieldStatus = 0x02d3,
     }
 }

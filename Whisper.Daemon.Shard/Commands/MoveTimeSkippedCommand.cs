@@ -16,20 +16,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using log4net;
 using System;
+using System.Runtime.InteropServices;
 using Whisper.Daemon.Shard.Lookup;
 using Whisper.Daemon.Shard.Net;
-using Whisper.Shared.Utility;
+using Whisper.Game.Objects;
 
 namespace Whisper.Daemon.Shard.Commands
 {
-    public sealed class MeetingStoneInfoCommand : ShardCommandBase<ClientPacketHeader>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct MoveTimeSkipped
     {
+        private ClientPacketHeader Header;
+        public ObjectID UnitID;
+        public int TimeSkipped;
+    }
+
+    public sealed class MoveTimeSkippedCommand : ShardCommandBase<MoveTimeSkipped>
+    {
+        private readonly ILog log = LogManager.GetLogger(typeof(MoveTimeSkippedCommand));
+
         public override string Name
         {
             get
             {
-                return ShardClientOpcode.MeetingStoneInfo.ToString();
+                return ShardClientOpcode.MoveTimeSkipped.ToString();
             }
         }
 
@@ -49,15 +61,9 @@ namespace Whisper.Daemon.Shard.Commands
             }
         }
 
-        public override void ExecuteCommand(ShardSession session, ShardRequest request, ClientPacketHeader header)
+        public override void ExecuteCommand(ShardSession session, ShardRequest request, MoveTimeSkipped header)
         {
-            using (ByteBuffer response = new ByteBuffer())
-            {
-                response.Append(0);
-                response.Append((byte)6); // ?
-
-                session.Send(ShardServerOpcode.MeetingStoneSetQueue, response);
-            }
+            log.DebugFormat("received {0} packet. unit id = {1}, time skipped = {2}", ShardClientOpcode.MoveTimeSkipped, header.UnitID, header.TimeSkipped);
         }
     }
 }
