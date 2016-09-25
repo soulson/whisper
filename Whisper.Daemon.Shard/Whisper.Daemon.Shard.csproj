@@ -98,6 +98,7 @@
     <Compile Include="Commands\BattlefieldStatusCommand.cs" />
     <Compile Include="Commands\CharacterCreateCommand.cs" />
     <Compile Include="Commands\CharacterListCommand.cs" />
+    <Compile Include="Commands\MeetingStoneInfoCommand.cs" />
     <Compile Include="Commands\NoopCommand.cs" />
     <Compile Include="Commands\PingCommand.cs" />
     <Compile Include="Commands\PlayerLoginCommand.cs" />

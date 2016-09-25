@@ -73,6 +73,7 @@ namespace Whisper.Daemon.Shard.Lookup
         LoginSetRestStart = 0x021e,
         LoginVerifyWorld = 0x0236,
         QueryNextMailTime = 0x0284,
+        MeetingStoneSetQueue = 0x0295,
         InitializeWorldState = 0x02c2,
         QueryRaidInfo = 0x02cc,
         AddonInfo = 0x02ef,
