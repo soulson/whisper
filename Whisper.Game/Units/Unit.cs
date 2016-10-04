@@ -17,7 +17,9 @@
  */
 
 using System;
+using Whisper.Game.Characters;
 using Whisper.Game.Objects;
+using Whisper.Shared.Utility;
 
 namespace Whisper.Game.Units
 {
@@ -73,6 +75,31 @@ namespace Whisper.Game.Units
         public void SetField(UnitFields field, float value)
         {
             SetField((ushort)field, value);
+        }
+
+        protected override ObjectUpdateFlags UpdateFlags
+        {
+            get
+            {
+                return base.UpdateFlags | ObjectUpdateFlags.Living;
+            }
+        }
+
+        protected override void AppendMovementUpdate(ByteBuffer buffer, ObjectUpdateType updateType, ObjectUpdateFlags updateFlags)
+        {
+            base.AppendMovementUpdate(buffer, updateType, updateFlags);
+
+            buffer.Append((int)MovementFlags);
+            buffer.Append(0); // time
+            buffer.Append(Position);
+            buffer.Append(0); // fallingTime
+
+            buffer.Append(MovementSpeed.Walking);
+            buffer.Append(MovementSpeed.Running);
+            buffer.Append(MovementSpeed.RunningBack);
+            buffer.Append(MovementSpeed.Swimming);
+            buffer.Append(MovementSpeed.SwimmingBack);
+            buffer.Append(MovementSpeed.Turning);
         }
     }
 }

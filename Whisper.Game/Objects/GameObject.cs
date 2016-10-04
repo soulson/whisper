@@ -157,43 +157,43 @@ namespace Whisper.Game.Objects
             SetField((ushort)field, value);
         }
 
-        public virtual void BuildTargetedCreationUpdate(UpdateData data, Character character)
+        protected virtual ObjectUpdateFlags UpdateFlags
+        {
+            get
+            {
+                return ObjectUpdateFlags.HasPosition | ObjectUpdateFlags.All;
+            }
+        }
+
+        protected virtual void AppendBasicUpdate(ByteBuffer buffer, ObjectUpdateType updateType, ObjectUpdateFlags updateFlags)
+        {
+            buffer.Append((byte)updateType);
+            buffer.Append(ID.GetPacked());
+            buffer.Append((byte)TypeID);
+            buffer.Append((byte)updateFlags);
+        }
+
+        protected virtual void AppendMovementUpdate(ByteBuffer buffer, ObjectUpdateType updateType, ObjectUpdateFlags updateFlags)
+        {
+
+        }
+
+        public void BuildTargetedCreationUpdate(UpdateData data, Character character)
         {
             ObjectUpdateType updateType = ObjectUpdateType.CreateObject2;
-            ObjectUpdateFlags updateFlags = ObjectUpdateFlags.HasPosition | ObjectUpdateFlags.All;
+            ObjectUpdateFlags updateFlags = UpdateFlags;
 
             if (character == this)
                 updateFlags |= ObjectUpdateFlags.Self;
 
-            if (this is Unit)
-                updateFlags |= ObjectUpdateFlags.Living;
-
             using (ByteBuffer buffer = new ByteBuffer())
             {
                 // basic update
-                buffer.Append((byte)updateType);
-                buffer.Append(ID.GetPacked());
-                buffer.Append((byte)TypeID);
+                AppendBasicUpdate(buffer, updateType, updateFlags);
 
                 // movement update
-                buffer.Append((byte)updateFlags);
-
                 if((updateFlags & ObjectUpdateFlags.Living) != 0)
-                {
-                    Unit me = (Unit)this;
-
-                    buffer.Append((int)me.MovementFlags);
-                    buffer.Append(0); // time
-                    buffer.Append(Position);
-                    buffer.Append(0); // fallingTime
-
-                    buffer.Append(me.MovementSpeed.Walking);
-                    buffer.Append(me.MovementSpeed.Running);
-                    buffer.Append(me.MovementSpeed.RunningBack);
-                    buffer.Append(me.MovementSpeed.Swimming);
-                    buffer.Append(me.MovementSpeed.SwimmingBack);
-                    buffer.Append(me.MovementSpeed.Turning);
-                }
+                    AppendMovementUpdate(buffer, updateType, updateFlags);
                 else if((updateFlags & ObjectUpdateFlags.HasPosition) != 0)
                     buffer.Append(Position);
 
@@ -204,10 +204,6 @@ namespace Whisper.Game.Objects
                     buffer.Append(1); // ?
 
                 // values update
-                //buffer.Append((byte)ObjectUpdateType.Values); // not sure where i found these but they don't seem to be necessary
-                //buffer.Append(ID.GetPacked());
-
-
                 SetField(ObjectFields.ID, ID.LongForm);
                 SetField(ObjectFields.Scale, 1.0f);
                 SetField(ObjectFields.Type, 0x19); //(int)ObjectTypeID.Player);
@@ -308,7 +304,7 @@ namespace Whisper.Game.Objects
                 SetField((ushort)CharacterFields.Bytes2, 0x02000000);
                 SetField((ushort)CharacterFields.Bytes3, 0x00000001);
 
-                UpdateMask updateMask = new UpdateMask(FieldCount/*, MagicUpdateMask*/);
+                UpdateMask updateMask = new UpdateMask(FieldCount);
                 for (ushort i = 0; i < FieldCount; ++i)
                 {
                     if (GetFieldUnsigned(i) != 0)
@@ -318,48 +314,6 @@ namespace Whisper.Game.Objects
                 log.DebugFormat("create updatemask block count is 0x{0:x2}", updateMask.BlockCount);
                 buffer.Append(updateMask.BlockCount);
                 buffer.Append(updateMask.Data);
-
-                /*int active = 0;
-                byte[] magicFieldList = Strings.HexDumpToBytes(MagicFieldList);
-                for (ushort i = 0; i < FieldCount; ++i)
-                {
-                    if (updateMask.GetBit(i))
-                        SetField(i, BitConverter.ToUInt32(magicFieldList, active++ * 4));
-                }
-                
-                for (ushort i = 0; i < FieldCount; ++i)
-                {
-                    if (updateMask.GetBit(i))
-                    {
-                        ObjectFields of;
-                        UnitFields uf;
-                        CharacterFields cf;
-                        ushort checker;
-
-                        if (Enum.TryParse(i.ToString(), out of) && !ushort.TryParse(of.ToString(), out checker))
-                            log.DebugFormat("Magic update mask includes ObjectFields.{0}: 0x{1:x8} [{2}] [{3}]", of, GetFieldUnsigned(i), GetFieldSigned(i), GetFieldFloat(i));
-                        else if (Enum.TryParse(i.ToString(), out uf) && !ushort.TryParse(uf.ToString(), out checker))
-                            log.DebugFormat("Magic update mask includes UnitFields.{0}: 0x{1:x8} [{2}] [{3}]", uf, GetFieldUnsigned(i), GetFieldSigned(i), GetFieldFloat(i));
-                        else if (Enum.TryParse(i.ToString(), out cf) && !ushort.TryParse(cf.ToString(), out checker))
-                            log.DebugFormat("Magic update mask includes CharacterFields.{0}: 0x{1:x8} [{2}] [{3}]", cf, GetFieldUnsigned(i), GetFieldSigned(i), GetFieldFloat(i));
-                        else
-                            log.DebugFormat("Magic update mask includes other thing 0x{0:x4}: 0x{1:x8} [{2}] [{3}]", i, GetFieldUnsigned(i), GetFieldSigned(i), GetFieldFloat(i));
-                    }
-                }*/
-
-                // determine which fields are not actually required
-                //updateMask.UnsetBit((ushort)UnitFields.Bytes0);
-                //updateMask.UnsetBit((ushort)UnitFields.Bytes1);
-                //updateMask.UnsetBit((ushort)UnitFields.Bytes2);
-                //updateMask.UnsetBit((ushort)CharacterFields.Bytes1);
-                //updateMask.UnsetBit((ushort)CharacterFields.Bytes2);
-                //updateMask.UnsetBit((ushort)CharacterFields.Bytes3);
-
-                //updateMask.UnsetBit((ushort)UnitFields.Power4); // necessary
-                //updateMask.UnsetBit((ushort)UnitFields.MaxPower4); // necessary
-                //updateMask.UnsetBit((ushort)UnitFields.Flags); // necessary
-                //updateMask.UnsetBit((ushort)UnitFields.DisplayID);
-                //updateMask.UnsetBit((ushort)UnitFields.NativeDisplayID);
 
                 // write the value set
                 for (ushort i = 0; i < FieldCount; ++i)
@@ -372,45 +326,5 @@ namespace Whisper.Game.Objects
                 data.AddUpdateBlock(buffer);
             }
         }
-
-        private const string MagicUpdateMask =
-@"15
-00 C0 74 1D 40 00 00 00 00 00 00 00 00 00 C0 DF
-04 C2 0F 3C 19 00 00 0E 00 00 00 00 00 00 00 00
-00 00 00 00 01 10 00 00 10 00 01 00 00 00 00 00
-00 00 00 00 00 00 01 00 00 00 00 00 F0 3C 00 30
-00 F0 03 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 E0 B6 6D 1B 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 80 68 04 00 00 00 00 00
-00 80 00 00 00 00 80 3F 00 00 00 00 20 00 00 00
-00 00 00";
-
-        private const string MagicFieldList =
-       @"02 00 00 00 19 00 00 00 00 00 80 3F 33
-00 00 00 A5 00 00 00 64 00 00 00 33 00 00 00 A5
-00 00 00 E8 03 00 00 64 00 00 00 01 00 00 00 01
-00 00 00 01 08 01 00 08 00 00 00 54 0B 00 00 D0
-07 00 00 D0 07 00 00 F4 FD 54 3E 00 00 C0 3F 32
-00 00 00 32 00 00 00 25 49 A2 40 25 49 E2 40 00
-EE 00 00 00 00 80 3F 14 00 00 00 14 00 00 00 14
-00 00 00 17 00 00 00 17 00 00 00 2D 00 00 00 64
-00 00 00 1F 00 00 00 00 28 00 00 0A 00 00 00 0A
-00 00 00 B7 6D 1B 40 B7 6D 5B 40 01 05 05 05 00
-00 00 02 01 00 00 00 D0 17 00 00 38 00 00 00 73
-05 00 00 37 00 00 00 23 00 00 00 16 00 00 00 00
-00 00 40 0E 00 00 00 00 00 00 40 10 00 00 00 00
-00 00 40 12 00 00 00 00 00 00 40 14 00 00 00 00
-00 00 40 18 00 00 00 00 00 00 40 1A 00 00 00 00
-00 00 40 1C 00 00 00 00 00 00 40 90 01 00 00 06
-00 00 00 01 00 01 00 08 00 00 00 01 00 01 00 5F
-00 00 00 01 00 05 00 62 00 00 00 2C 01 2C 01 88
-00 00 00 01 00 05 00 A2 00 00 00 01 00 05 00 E4
-00 00 00 01 00 05 00 9F 01 00 00 01 00 01 00 02
-00 00 00 3E 0A 57 3F 1C 6A 5E 3F AB 2C 54 3F 00
-00 00 20 07 00 00 00 00 00 80 3F 00 00 80 3F 00
-00 80 3F 00 00 80 3F 00 00 80 3F 00 00 80 3F 00
-00 80 3F FF FF FF FF";
     }
 }
