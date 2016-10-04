@@ -24,17 +24,17 @@ namespace Whisper.Game.Units
     /// UnitFlags.Flags
     /// </remarks>
     [Flags]
-    public enum UnitFlags : int
+    public enum UnitFlags : uint
     {
         None = 0x00000000,
         NotAttackable = 0x00000002,
         DisableMovement = 0x00000004,
-        //PvPAttackable = 0x00000008, ?
+        PvPUnit = 0x00000008,
         Rename = 0x00000010,
         Resting = 0x00000020,
         NotAttackableWhenOutOfCombat = 0x00000100,
         CannotAttack = 0x00000200,
-        PvP = 0x00001000,
+        PvPFlagged = 0x00001000,
         Pacified = 0x00020000,
         DisableRotation = 0x00040000,
         InCombat = 0x00080000,
@@ -47,7 +47,7 @@ namespace Whisper.Game.Units
     /// UnitFlags.NpcFlags
     /// </remarks>
     [Flags]
-    public enum NpcFlags : int
+    public enum NpcFlags : uint
     {
         None = 0x00000000,
         Gossip = 0x00000001,

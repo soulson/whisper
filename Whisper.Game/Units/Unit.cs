@@ -35,6 +35,453 @@ namespace Whisper.Game.Units
             MovementSpeed = new MovementSpeed();
         }
 
+        #region Unit Fields
+        public int Health
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Health);
+            }
+            set
+            {
+                SetField(UnitFields.Health, value);
+            }
+        }
+
+        public int HealthMax
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.MaxHealth);
+            }
+            set
+            {
+                SetField(UnitFields.MaxHealth, value);
+            }
+        }
+
+        public int HealthBase
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.BaseHealth);
+            }
+            set
+            {
+                SetField(UnitFields.BaseHealth, value);
+            }
+        }
+
+        public int Mana
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Mana);
+            }
+            set
+            {
+                SetField(UnitFields.Mana, value);
+            }
+        }
+
+        public int ManaMax
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.MaxMana);
+            }
+            set
+            {
+                SetField(UnitFields.MaxMana, value);
+            }
+        }
+
+        public int ManaBase
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.BaseMana);
+            }
+            set
+            {
+                SetField(UnitFields.BaseMana, value);
+            }
+        }
+
+        public int Rage
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Rage);
+            }
+            set
+            {
+                SetField(UnitFields.Rage, value);
+            }
+        }
+
+        public int RageMax
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.MaxRage);
+            }
+            set
+            {
+                SetField(UnitFields.MaxRage, value);
+            }
+        }
+
+        public int Energy
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Energy);
+            }
+            set
+            {
+                SetField(UnitFields.Energy, value);
+            }
+        }
+
+        public int EnergyMax
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.MaxEnergy);
+            }
+            set
+            {
+                SetField(UnitFields.MaxEnergy, value);
+            }
+        }
+
+        public int Focus
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Focus);
+            }
+            set
+            {
+                SetField(UnitFields.Focus, value);
+            }
+        }
+
+        public int FocusMax
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.MaxFocus);
+            }
+            set
+            {
+                SetField(UnitFields.MaxFocus, value);
+            }
+        }
+
+        public int Happiness
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Happiness);
+            }
+            set
+            {
+                SetField(UnitFields.Happiness, value);
+            }
+        }
+
+        public int HappinessMax
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.MaxHappiness);
+            }
+            set
+            {
+                SetField(UnitFields.MaxHappiness, value);
+            }
+        }
+
+        public UnitFlags UnitFlags
+        {
+            get
+            {
+                return (UnitFlags)GetFieldUnsigned(UnitFields.Flags);
+            }
+            set
+            {
+                SetField(UnitFields.Flags, (uint)value);
+            }
+        }
+
+        public int Level
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Level);
+            }
+            set
+            {
+                SetField(UnitFields.Level, value);
+            }
+        }
+
+        public int Strength
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Strength);
+            }
+            set
+            {
+                SetField(UnitFields.Strength, value);
+            }
+        }
+
+        public int Agility
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Agility);
+            }
+            set
+            {
+                SetField(UnitFields.Agility, value);
+            }
+        }
+
+        public int Stamina
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Stamina);
+            }
+            set
+            {
+                SetField(UnitFields.Stamina, value);
+            }
+        }
+
+        public int Intellect
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Intellect);
+            }
+            set
+            {
+                SetField(UnitFields.Intellect, value);
+            }
+        }
+
+        public int Spirit
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Spirit);
+            }
+            set
+            {
+                SetField(UnitFields.Spirit, value);
+            }
+        }
+
+        public int DisplayID
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.DisplayID);
+            }
+            set
+            {
+                SetField(UnitFields.DisplayID, value);
+            }
+        }
+
+        public int NativeDisplayID
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.NativeDisplayID);
+            }
+            set
+            {
+                SetField(UnitFields.NativeDisplayID, value);
+            }
+        }
+
+        public int FactionTemplate
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.FactionTemplate);
+            }
+            set
+            {
+                SetField(UnitFields.FactionTemplate, value);
+            }
+        }
+
+        public int AttackTimeMainhandMilliseconds
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.AttackTimeBase);
+            }
+            set
+            {
+                SetField(UnitFields.AttackTimeBase, value);
+            }
+        }
+
+        public int AttackTimeRangedMilliseconds
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.AttackTimeRanged);
+            }
+            set
+            {
+                SetField(UnitFields.AttackTimeRanged, value);
+            }
+        }
+
+        public int AttackTimeOffhandMilliseconds
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.AttackTimeOffhand);
+            }
+            set
+            {
+                SetField(UnitFields.AttackTimeOffhand, value);
+            }
+        }
+
+        public int AttackPower
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.AttackPower);
+            }
+            set
+            {
+                SetField(UnitFields.AttackPower, value);
+            }
+        }
+
+        public int AttackPowerRanged
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.AttackPowerRanged);
+            }
+            set
+            {
+                SetField(UnitFields.AttackPowerRanged, value);
+            }
+        }
+
+        public float BoundingRadius
+        {
+            get
+            {
+                return GetFieldFloat(UnitFields.BoundingRadius);
+            }
+            set
+            {
+                SetField(UnitFields.BoundingRadius, value);
+            }
+        }
+
+        public float CombatReach
+        {
+            get
+            {
+                return GetFieldFloat(UnitFields.CombatReach);
+            }
+            set
+            {
+                SetField(UnitFields.CombatReach, value);
+            }
+        }
+
+        public float AttackDamageMainhandMin
+        {
+            get
+            {
+                return GetFieldFloat(UnitFields.DamageMin);
+            }
+            set
+            {
+                SetField(UnitFields.DamageMin, value);
+            }
+        }
+
+        public float AttackDamageMainhandMax
+        {
+            get
+            {
+                return GetFieldFloat(UnitFields.DamageMax);
+            }
+            set
+            {
+                SetField(UnitFields.DamageMax, value);
+            }
+        }
+
+        public float AttackDamageRangedMin
+        {
+            get
+            {
+                return GetFieldFloat(UnitFields.DamageRangedMin);
+            }
+            set
+            {
+                SetField(UnitFields.DamageRangedMin, value);
+            }
+        }
+
+        public float AttackDamageRangedMax
+        {
+            get
+            {
+                return GetFieldFloat(UnitFields.DamageRangedMax);
+            }
+            set
+            {
+                SetField(UnitFields.DamageRangedMax, value);
+            }
+        }
+
+        public float CastSpeed
+        {
+            get
+            {
+                return GetFieldFloat(UnitFields.ModCastSpeed);
+            }
+            set
+            {
+                SetField(UnitFields.ModCastSpeed, value);
+            }
+        }
+
+        public int Armor
+        {
+            get
+            {
+                return GetFieldSigned(UnitFields.Armor);
+            }
+            set
+            {
+                SetField(UnitFields.Armor, value);
+            }
+        }
+        #endregion
+
+        #region Unit Properties
         public MovementFlags MovementFlags
         {
             get;
@@ -46,7 +493,9 @@ namespace Whisper.Game.Units
             get;
             private set;
         }
+        #endregion
 
+        #region Fields Management
         public uint GetFieldUnsigned(UnitFields field)
         {
             return GetFieldUnsigned((ushort)field);
@@ -76,7 +525,9 @@ namespace Whisper.Game.Units
         {
             SetField((ushort)field, value);
         }
+        #endregion
 
+        #region Update Management
         protected override ObjectUpdateFlags UpdateFlags
         {
             get
@@ -101,5 +552,6 @@ namespace Whisper.Game.Units
             buffer.Append(MovementSpeed.SwimmingBack);
             buffer.Append(MovementSpeed.Turning);
         }
+        #endregion
     }
 }

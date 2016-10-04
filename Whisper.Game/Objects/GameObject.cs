@@ -38,6 +38,9 @@ namespace Whisper.Game.Objects
 
         protected GameObject(ObjectID id, ObjectTypeID typeId, ushort fieldsCount)
         {
+            if (fieldsCount < (ushort)ObjectFields.END)
+                throw new ArgumentOutOfRangeException(nameof(fieldsCount), "field count must be at least the minimum for ObjectFields");
+
             // must go first. other properties may actually be backed by this array
             fields = new uint[fieldsCount];
 
@@ -211,6 +214,7 @@ namespace Whisper.Game.Objects
         }
         #endregion
 
+        #region Update Management
         protected virtual ObjectUpdateFlags UpdateFlags
         {
             get
@@ -382,5 +386,6 @@ namespace Whisper.Game.Objects
             }
             return updateMask;
         }
+        #endregion
     }
 }
