@@ -30,6 +30,7 @@ namespace Whisper.Game.Objects
         private readonly ILog log = LogManager.GetLogger(typeof(GameObject));
 
         private uint[] fields;
+        private ObjectTypeID typeId;
 
         public GameObject(ObjectID id, ObjectTypeID typeId) : this(id, typeId, (ushort)ObjectFields.END)
         {
@@ -37,23 +38,73 @@ namespace Whisper.Game.Objects
 
         protected GameObject(ObjectID id, ObjectTypeID typeId, ushort fieldsCount)
         {
+            // must go first. other properties may actually be backed by this array
+            fields = new uint[fieldsCount];
+
             ID = id;
             TypeID = typeId;
-            fields = new uint[fieldsCount];
+            Scale = 1.0f;
         }
 
+        #region Object Fields
         public ObjectID ID
         {
-            get;
-            private set;
+            get
+            {
+                return new ObjectID(GetFieldLong(ObjectFields.ID));
+            }
+            private set
+            {
+                SetField(ObjectFields.ID, value.LongForm);
+            }
+        }
+
+        public float Scale
+        {
+            get
+            {
+                return GetFieldFloat(ObjectFields.Scale);
+            }
+            set
+            {
+                SetField(ObjectFields.Scale, value);
+            }
         }
 
         public ObjectTypeID TypeID
         {
-            get;
-            private set;
-        }
+            get
+            {
+                return typeId;
+            }
+            private set
+            {
+                ObjectTypeMask typeMask = ObjectTypeMask.None;
+                switch(value)
+                {
+                    case ObjectTypeID.Player:
+                        typeMask |= ObjectTypeMask.Player;
+                        goto case ObjectTypeID.Unit;
 
+                    case ObjectTypeID.Unit:
+                        typeMask |= ObjectTypeMask.Unit;
+                        goto case ObjectTypeID.Object;
+
+                    case ObjectTypeID.Object:
+                        typeMask |= ObjectTypeMask.Object;
+                        break;
+
+                    default:
+                        throw new ArgumentException($"illegal ObjectTypeID value '{value}'");
+                }
+
+                SetField(ObjectFields.Type, (uint)typeMask);
+                typeId = value;
+            }
+        }
+        #endregion
+
+        #region Object Properties
         public int MapID
         {
             get;
@@ -65,7 +116,9 @@ namespace Whisper.Game.Objects
             get;
             set;
         }
+        #endregion
 
+        #region Fields Management
         public int FieldCount
         {
             get
@@ -156,6 +209,7 @@ namespace Whisper.Game.Objects
         {
             SetField((ushort)field, value);
         }
+        #endregion
 
         protected virtual ObjectUpdateFlags UpdateFlags
         {
@@ -180,7 +234,7 @@ namespace Whisper.Game.Objects
 
         public void BuildTargetedCreationUpdate(UpdateData data, Character character)
         {
-            ObjectUpdateType updateType = ObjectUpdateType.CreateObject2;
+            ObjectUpdateType updateType = ObjectUpdateType.CreateObject2; // review how to pick which CreateObject to use
             ObjectUpdateFlags updateFlags = UpdateFlags;
 
             if (character == this)
@@ -204,9 +258,6 @@ namespace Whisper.Game.Objects
                     buffer.Append(1); // ?
 
                 // values update
-                SetField(ObjectFields.ID, ID.LongForm);
-                SetField(ObjectFields.Scale, 1.0f);
-                SetField(ObjectFields.Type, 0x19); //(int)ObjectTypeID.Player);
                 SetField((ushort)UnitFields.Health, 51);
                 SetField((ushort)UnitFields.Mana, 165);
                 SetField((ushort)UnitFields.MaxHealth, 51);
@@ -304,13 +355,7 @@ namespace Whisper.Game.Objects
                 SetField((ushort)CharacterFields.Bytes2, 0x02000000);
                 SetField((ushort)CharacterFields.Bytes3, 0x00000001);
 
-                UpdateMask updateMask = new UpdateMask(FieldCount);
-                for (ushort i = 0; i < FieldCount; ++i)
-                {
-                    if (GetFieldUnsigned(i) != 0)
-                        updateMask.SetBit(i);
-                }
-
+                UpdateMask updateMask = BuildCreationUpdateMask();
                 log.DebugFormat("create updatemask block count is 0x{0:x2}", updateMask.BlockCount);
                 buffer.Append(updateMask.BlockCount);
                 buffer.Append(updateMask.Data);
@@ -325,6 +370,17 @@ namespace Whisper.Game.Objects
                 // append the update
                 data.AddUpdateBlock(buffer);
             }
+        }
+
+        protected UpdateMask BuildCreationUpdateMask()
+        {
+            UpdateMask updateMask = new UpdateMask(FieldCount);
+            for (ushort i = 0; i < FieldCount; ++i)
+            {
+                if (GetFieldUnsigned(i) != 0)
+                    updateMask.SetBit(i);
+            }
+            return updateMask;
         }
     }
 }

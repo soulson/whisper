@@ -60,6 +60,7 @@
     <Compile Include="Objects\ObjectID.cs" />
     <Compile Include="Objects\GameObject.cs" />
     <Compile Include="Objects\ObjectTypeID.cs" />
+    <Compile Include="Objects\ObjectTypeMask.cs" />
     <Compile Include="Objects\ObjectUpdateFlags.cs" />
     <Compile Include="Objects\ObjectUpdateType.cs" />
     <Compile Include="Objects\UpdateData.cs" />

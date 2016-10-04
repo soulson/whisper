@@ -29,6 +29,11 @@ namespace Whisper.Game.Objects
     
         private ulong id;
 
+        public ObjectID(ulong longForm)
+        {
+            id = longForm;
+        }
+
         public ObjectID(ulong id, Type type)
         {
             this.id = (id & ~TypeMask) | ((ulong)type & TypeMask);
