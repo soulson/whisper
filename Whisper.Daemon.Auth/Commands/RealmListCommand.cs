@@ -98,6 +98,7 @@ namespace Whisper.Daemon.Auth.Commands
                 {
                     string name = result.GetString(0);
                     string address = result.GetString(1) + ':' + result.GetInt32(2);
+                    DateTime lastPing = result.GetDateTime(5);
                     
                     ShardType type = (ShardType)result.GetByte(4);
                     ShardFlags flags = ShardFlags.None;
@@ -105,7 +106,8 @@ namespace Whisper.Daemon.Auth.Commands
                     float population = 0.0f;
                     byte category = 0;
 
-                    if (DateTime.Now - result.GetDateTime(5) > new TimeSpan(0, 0, 0, 0, session.Server.AppConfig.ShardOfflineTimeoutMilliseconds))
+                    TimeSpan timeSinceLastPing = DateTime.Now - lastPing;
+                    if (timeSinceLastPing > new TimeSpan(0, 0, 0, 0, session.Server.AppConfig.ShardOfflineTimeoutMilliseconds))
                         flags |= ShardFlags.Offline;
 
                     if (result.GetBoolean(3))

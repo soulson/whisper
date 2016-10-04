@@ -58,7 +58,7 @@ namespace Whisper.Daemon.Shard.CLI
             {
                 while (running)
                 {
-                    int result = Server.AuthDB.ExecuteNonQuery("update shard set last_ping = now() where id = ?", Server.AppConfig.ShardID);
+                    int result = Server.AuthDB.ExecuteNonQuery("update shard set last_ping = ? where id = ?", DateTime.Now, Server.AppConfig.ShardID);
                     if (result != 1)
                         log.ErrorFormat("expected to update 1 row with ping but updated {0}. this is likely due to a mismatch between ShardID in shardd.config and wauth.shard.id", result);
 
