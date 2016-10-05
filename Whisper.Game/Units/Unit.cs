@@ -479,6 +479,66 @@ namespace Whisper.Game.Units
                 SetField(UnitFields.Armor, value);
             }
         }
+
+        public UnitFlags1 UnitFlags1
+        {
+            get
+            {
+                return (UnitFlags1)GetFieldByte((ushort)UnitFields.Bytes1, 3);
+            }
+            set
+            {
+                SetField((ushort)UnitFields.Bytes1, 3, (byte)value);
+            }
+        }
+
+        public UnitFlags2 UnitFlags2
+        {
+            get
+            {
+                return (UnitFlags2)GetFieldByte((ushort)UnitFields.Bytes2, 1);
+            }
+            set
+            {
+                SetField((ushort)UnitFields.Bytes2, 1, (byte)value);
+            }
+        }
+
+        public StandState StandState
+        {
+            get
+            {
+                return (StandState)GetFieldByte((ushort)UnitFields.Bytes1, 0);
+            }
+            set
+            {
+                SetField((ushort)UnitFields.Bytes1, 0, (byte)value);
+            }
+        }
+
+        public SheathState SheathState
+        {
+            get
+            {
+                return (SheathState)GetFieldByte((ushort)UnitFields.Bytes2, 0);
+            }
+            set
+            {
+                SetField((ushort)UnitFields.Bytes2, 0, (byte)value);
+            }
+        }
+
+        public Resource ActiveResource
+        {
+            get
+            {
+                return (Resource)GetFieldByte((ushort)UnitFields.Bytes0, 3);
+            }
+            set
+            {
+                SetField((ushort)UnitFields.Bytes0, 3, (byte)value);
+            }
+        }
         #endregion
 
         #region Unit Properties

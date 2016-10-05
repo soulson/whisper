@@ -43,6 +43,7 @@ namespace Whisper.Game.Units
         DetectMagic = 0x08000000,
         Sheath = 0x40000000,
     }
+
     /// <remarks>
     /// UnitFlags.NpcFlags
     /// </remarks>

@@ -68,6 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Units\MovementFlags.cs" />
     <Compile Include="Units\MovementSpeed.cs" />
+    <Compile Include="Units\Resource.cs" />
     <Compile Include="Units\SheathState.cs" />
     <Compile Include="Units\StandState.cs" />
     <Compile Include="Units\Unit.cs" />

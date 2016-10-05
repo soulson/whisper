@@ -146,6 +146,13 @@ namespace Whisper.Game.Objects
             return fields[index] | ((ulong)fields[index + 1] << 32);
         }
 
+        protected byte GetFieldByte(ushort fieldIndex, byte byteIndex)
+        {
+            uint bytes = GetFieldUnsigned(fieldIndex);
+            bytes &= (uint)0x000000ff << (byteIndex * 8);
+            return (byte)(bytes >> (byteIndex * 8));
+        }
+
         protected unsafe float GetFieldFloat(ushort index)
         {
             uint field = fields[index];
@@ -166,6 +173,13 @@ namespace Whisper.Game.Objects
         protected unsafe void SetField(ushort index, int value)
         {
             fields[index] = *(uint*)&value;
+        }
+
+        protected void SetField(ushort fieldIndex, byte byteIndex, byte value)
+        {
+            uint bytes = GetFieldUnsigned(fieldIndex);
+            bytes &= ~((uint)0x000000ff << (byteIndex * 8));
+            SetField(fieldIndex, bytes | ((uint)value << (byteIndex * 8)));
         }
 
         protected unsafe void SetField(ushort index, float value)
