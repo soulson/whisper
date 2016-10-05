@@ -18,12 +18,18 @@
 
 using System;
 
-namespace Whisper.Game.Characters
+namespace Whisper.Game.Units
 {
-    public enum CharacterSex : byte
+    public enum Class : byte
     {
-        Male = 0,
-        Female = 1,
-        None = 2,
+        Warrior = 1,
+        Paladin = 2,
+        Hunter = 3,
+        Rogue = 4,
+        Priest = 5,
+        Shaman = 7,
+        Mage = 8,
+        Warlock = 9,
+        Druid = 11,
     }
 }

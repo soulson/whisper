@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using Whisper.Game.Characters;
+using Whisper.Game.Units;
 using Whisper.Shared.Database;
 using log4net;
 
@@ -48,7 +49,7 @@ namespace Whisper.Game.World
             log.Info("loading character templates...");
             datasource.ExecuteQuery("select race, class, map_id, zone_id, position_x, position_y, position_z, orientation from character_template", ctReader =>
             {
-                var templates = new Dictionary<CharacterRace, IDictionary<CharacterClass, CharacterTemplate>>();
+                var templates = new Dictionary<Race, IDictionary<Class, CharacterTemplate>>();
 
                 while (ctReader.Read())
                 {
@@ -76,7 +77,7 @@ namespace Whisper.Game.World
                     CharacterTemplate template = new CharacterTemplate(race, @class, ctReader.GetInt32(2), ctReader.GetInt32(3), ctReader.GetFloat(4), ctReader.GetFloat(5), ctReader.GetFloat(6), ctReader.GetFloat(7), actionButtons, spells);
 
                     if (!templates.ContainsKey(template.Race))
-                        templates.Add(template.Race, new Dictionary<CharacterClass, CharacterTemplate>());
+                        templates.Add(template.Race, new Dictionary<Class, CharacterTemplate>());
 
                     templates[template.Race].Add(template.Class, template);
                     log.DebugFormat("loaded character template for {0} {1} with {2} spells and {3} buttons", template.Race, template.Class, template.SpellIDs.Count, buttonCount);
@@ -89,7 +90,7 @@ namespace Whisper.Game.World
         /// <summary>
         /// Gets a mapping from CharacterRace and CharacterClass to a CharacterTemplate describing the starting state for characters of that race and class.
         /// </summary>
-        public IDictionary<CharacterRace, IDictionary<CharacterClass, CharacterTemplate>> CharacterTemplates
+        public IDictionary<Race, IDictionary<Class, CharacterTemplate>> CharacterTemplates
         {
             get;
             private set;

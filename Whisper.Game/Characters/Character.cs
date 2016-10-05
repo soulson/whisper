@@ -41,19 +41,19 @@ namespace Whisper.Game.Characters
             private set;
         }
 
-        public CharacterRace Race
+        public Race Race
         {
             get;
             set;
         }
 
-        public CharacterClass Class
+        public Class Class
         {
             get;
             set;
         }
 
-        public CharacterSex Sex
+        public Sex Sex
         {
             get;
             set;

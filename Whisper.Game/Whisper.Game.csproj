@@ -47,11 +47,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Characters\ActionButton.cs" />
-    <Compile Include="Characters\CharacterClass.cs" />
+    <Compile Include="Units\Class.cs" />
     <Compile Include="Characters\CharacterException.cs" />
     <Compile Include="Characters\CharacterFields.cs" />
-    <Compile Include="Characters\CharacterRace.cs" />
-    <Compile Include="Characters\CharacterSex.cs" />
+    <Compile Include="Units\Race.cs" />
+    <Compile Include="Units\Sex.cs" />
     <Compile Include="Characters\CharacterTemplate.cs" />
     <Compile Include="Characters\EquipmentSlot.cs" />
     <Compile Include="Characters\Character.cs" />

@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 using Whisper.Daemon.Shard.Lookup;
 using Whisper.Daemon.Shard.Net;
 using Whisper.Game.Characters;
+using Whisper.Game.Units;
 using Whisper.Shared.Utility;
 
 namespace Whisper.Daemon.Shard.Commands
@@ -70,7 +71,7 @@ namespace Whisper.Daemon.Shard.Commands
             byte facialHair = request.Packet[offset++];
             byte outfitId = request.Packet[offset++];
 
-            CharacterRace raceEnum;
+            Race raceEnum;
             if(!Enum.TryParse(race.ToString(), out raceEnum))
             {
                 log.WarnFormat("client attempted to create character with invalid race [{0}]", race);
@@ -78,7 +79,7 @@ namespace Whisper.Daemon.Shard.Commands
                 return;
             }
 
-            CharacterClass classEnum;
+            Class classEnum;
             if (!Enum.TryParse(@class.ToString(), out classEnum))
             {
                 log.WarnFormat("client attempted to create character with invalid class [{0}]", @class);
@@ -86,7 +87,7 @@ namespace Whisper.Daemon.Shard.Commands
                 return;
             }
 
-            if(sex != (byte)CharacterSex.Male && sex != (byte)CharacterSex.Female)
+            if(sex != (byte)Sex.Male && sex != (byte)Sex.Female)
             {
                 log.WarnFormat("client attempted to create character with invalid sex [{0}]", sex);
                 session.Send(ShardServerOpcode.CharacterCreate, (byte)CharacterCreateResponse.Failed);

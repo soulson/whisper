@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using Whisper.Game.Units;
 
 namespace Whisper.Game.Characters
 {
@@ -25,11 +26,11 @@ namespace Whisper.Game.Characters
     {
         public CharacterTemplate(byte race, byte @class, int mapId, int zoneId, float x, float y, float z, float orientation, IList<ActionButton> actionButtons, IList<int> spellIds)
         {
-            CharacterRace raceEnum;
+            Race raceEnum;
             if (!Enum.TryParse(race.ToString(), out raceEnum))
                 throw new CharacterException("attempt to create character template with invalid race [{0}]", race);
 
-            CharacterClass classEnum;
+            Class classEnum;
             if (!Enum.TryParse(@class.ToString(), out classEnum))
                 throw new CharacterException("attempt to create character template with invalid class [{0}]", @class);
 
@@ -52,13 +53,13 @@ namespace Whisper.Game.Characters
             SpellIDs = spellIds;
         }
 
-        public CharacterRace Race
+        public Race Race
         {
             get;
             private set;
         }
 
-        public CharacterClass Class
+        public Class Class
         {
             get;
             private set;

@@ -18,9 +18,9 @@
 
 using System;
 
-namespace Whisper.Game.Characters
+namespace Whisper.Game.Units
 {
-    public enum CharacterRace : byte
+    public enum Race : byte
     {
         Human = 1,
         Orc = 2,
