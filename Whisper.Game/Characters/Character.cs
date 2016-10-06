@@ -35,6 +35,7 @@ namespace Whisper.Game.Characters
             Name = name;
 
             // initialize default values
+            CombatReach = 1.5f;
             DamageDoneArcaneMultiplier = 1.0f;
             DamageDoneFrostMultiplier = 1.0f;
             DamageDoneFireMultiplier = 1.0f;
@@ -70,7 +71,6 @@ namespace Whisper.Game.Characters
             SetField(UnitFields.AttackTimeOffhand, 2000);
             SetField(UnitFields.AttackTimeRanged, 2000);
             SetField(UnitFields.BoundingRadius, 0.208f);
-            SetField(UnitFields.CombatReach, 1.5f);
             SetField(UnitFields.BaseMana, 100);
             SetField(UnitFields.BaseHealth, 31);
             SetField(CharacterFields.XPNextLevel, 400);
