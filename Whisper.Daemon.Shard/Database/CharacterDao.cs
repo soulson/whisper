@@ -78,6 +78,13 @@ namespace Whisper.Daemon.Shard.Database
                     else
                         throw new ArgumentException(string.Format("cannot load character with invalid sex {0}", result.GetByte(3)));
 
+                    character.Skin = result.GetByte(4);
+                    character.Face = result.GetByte(5);
+                    character.HairStyle = result.GetByte(6);
+                    character.HairColor = result.GetByte(7);
+                    character.FaceExtra = result.GetByte(8);
+                    character.Level = result.GetInt32(9);
+
                     return character;
                 }
                 else

@@ -37,6 +37,9 @@ namespace Whisper.Game.Characters
             // TODO: instead of 0x18 as described here, this field has value 0x28 for players. need to determine the difference
             UnitFlags2 |= UnitFlags2.Supportable;
             UnitFlags2 |= UnitFlags2.CanHaveAuras;
+
+            // TODO: need to change this when rest is implemented
+            RestState = RestState.Normal;
         }
 
         public string Name
@@ -73,6 +76,94 @@ namespace Whisper.Game.Characters
         {
             return Name;
         }
+
+        #region Character Fields
+        public byte Skin
+        {
+            get
+            {
+                return GetFieldByte((ushort)CharacterFields.Bytes1, 0);
+            }
+            set
+            {
+                SetField((ushort)CharacterFields.Bytes1, 0, value);
+            }
+        }
+
+        public byte Face
+        {
+            get
+            {
+                return GetFieldByte((ushort)CharacterFields.Bytes1, 1);
+            }
+            set
+            {
+                SetField((ushort)CharacterFields.Bytes1, 1, value);
+            }
+        }
+
+        public byte HairStyle
+        {
+            get
+            {
+                return GetFieldByte((ushort)CharacterFields.Bytes1, 2);
+            }
+            set
+            {
+                SetField((ushort)CharacterFields.Bytes1, 2, value);
+            }
+        }
+
+        public byte HairColor
+        {
+            get
+            {
+                return GetFieldByte((ushort)CharacterFields.Bytes1, 3);
+            }
+            set
+            {
+                SetField((ushort)CharacterFields.Bytes1, 3, value);
+            }
+        }
+
+        public byte FaceExtra
+        {
+            get
+            {
+                return GetFieldByte((ushort)CharacterFields.Bytes2, 0);
+            }
+            set
+            {
+                SetField((ushort)CharacterFields.Bytes2, 0, value);
+            }
+        }
+
+        public RestState RestState
+        {
+            get
+            {
+                return (RestState)GetFieldByte((ushort)CharacterFields.Bytes2, 3);
+            }
+            set
+            {
+                SetField((ushort)CharacterFields.Bytes2, 3, (byte)value);
+            }
+        }
+
+        public override Sex Sex
+        {
+            get
+            {
+                return base.Sex;
+            }
+
+            set
+            {
+                base.Sex = value;
+                SetField((ushort)CharacterFields.Bytes3, 0, (byte)value);
+            }
+        }
+        #endregion
 
         #region Fields Management
         public uint GetFieldUnsigned(CharacterFields field)

@@ -366,13 +366,6 @@ namespace Whisper.Game.Objects
                 SetField((ushort)0x02e3, 0x0000019f);
                 SetField((ushort)0x02e4, 0x00010001);
 
-                //SetField((ushort)UnitFields.Bytes0, 0x00010801);
-                //SetField((ushort)UnitFields.Bytes1, 0x0000ee00);
-                //SetField((ushort)UnitFields.Bytes2, 0x00002800);
-                SetField((ushort)CharacterFields.Bytes1, 0x05050501);
-                SetField((ushort)CharacterFields.Bytes2, 0x02000000);
-                SetField((ushort)CharacterFields.Bytes3, 0x00000001);
-
                 UpdateMask updateMask = BuildCreationUpdateMask();
                 log.DebugFormat("create updatemask block count is 0x{0:x2}", updateMask.BlockCount);
                 buffer.Append(updateMask.BlockCount);

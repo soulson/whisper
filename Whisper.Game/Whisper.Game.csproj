@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Characters\ActionButton.cs" />
+    <Compile Include="Characters\RestState.cs" />
     <Compile Include="Units\Class.cs" />
     <Compile Include="Characters\CharacterException.cs" />
     <Compile Include="Characters\CharacterFields.cs" />

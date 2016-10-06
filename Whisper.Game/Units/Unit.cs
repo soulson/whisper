@@ -504,7 +504,10 @@ namespace Whisper.Game.Units
             }
         }
 
-        public Sex Sex
+        /// <remarks>
+        /// Virtual because Character has another field that duplicates this one, so it can override this to set both.
+        /// </remarks>
+        public virtual Sex Sex
         {
             get
             {
