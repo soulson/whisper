@@ -52,7 +52,7 @@ namespace Whisper.Game.Characters
         BankSlotFirst = 0x178 + UnitFields.END, // Size:48
         BankSlotLast = 0x1a6 + UnitFields.END,
         BankBagSlotFirst = 0x1a8 + UnitFields.END, // Size:12
-        BankBagSlotLast = 0xab2 + UnitFields.END,
+        BankBagSlotLast = 0x1b2 + UnitFields.END,
         VendorBuybackSlotFirst = 0x1b4 + UnitFields.END, // Size:24
         VendorBuybackSlotLast = 0x1ca + UnitFields.END,
         KeyringSlotFirst = 0x1cc + UnitFields.END, // Size:64

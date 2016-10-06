@@ -307,24 +307,6 @@ namespace Whisper.Game.Objects
                 SetField((ushort)CharacterFields.CharacterPoints2, 2);
 
                 SetField((ushort)0x045a, 0x20000000);
-                
-                SetField((ushort)0x01ec, 0x00000016);
-                SetField((ushort)0x01ed, 0x40000000);
-                SetField((ushort)0x01ee, 0x0000000e);
-                SetField((ushort)0x01ef, 0x40000000);
-                SetField((ushort)0x01f2, 0x00000010);
-                SetField((ushort)0x01f3, 0x40000000);
-                SetField((ushort)0x01f4, 0x00000012);
-                SetField((ushort)0x01f5, 0x40000000);
-                SetField((ushort)0x0204, 0x00000014);
-                SetField((ushort)0x0205, 0x40000000);
-
-                SetField((ushort)CharacterFields.PackSlotFirst, 0x00000018);
-                SetField((ushort)0x0215, 0x40000000);
-                SetField((ushort)0x0216, 0x0000001a);
-                SetField((ushort)0x0217, 0x40000000);
-                SetField((ushort)0x0218, 0x0000001c);
-                SetField((ushort)0x0219, 0x40000000);
 
                 SetField((ushort)CharacterFields.SkillInfoFirst1, 0x00000006);
                 SetField((ushort)0x02cf, 0x00010001);
