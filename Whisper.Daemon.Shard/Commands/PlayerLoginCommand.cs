@@ -26,6 +26,7 @@ using Whisper.Daemon.Shard.Net;
 using Whisper.Game.Objects;
 using Whisper.Game.Characters;
 using Whisper.Shared.Utility;
+using Whisper.Game.Units;
 
 namespace Whisper.Daemon.Shard.Commands
 {
@@ -38,7 +39,6 @@ namespace Whisper.Daemon.Shard.Commands
 
     public sealed class PlayerLoginCommand : ShardCommandBase<PlayerLogin>
     {
-        private const int LoginEffectSpellID = 836;
         private const int FactionCount = 64;
         private const float GameSpeed = 0.01666667f;
 
@@ -74,8 +74,13 @@ namespace Whisper.Daemon.Shard.Commands
             Character player = new CharacterDao().GetCharacterByID(session.Server.ShardDB, header.CharacterID);
             log.DebugFormat("character '{0}' loaded successfully", player.Name);
 
+            // get race definition for this character and assign related unit values
+            RaceDefinition rd = session.Server.World.RaceDefinitions[player.Race];
+            player.DisplayID = player.NativeDisplayID = rd.GetDisplayID(player.Sex);
+            player.FactionTemplate = rd.FactionID;
+
             // set proficiencies (hack)
-            using (ByteBuffer packet = new ByteBuffer())
+            /*using (ByteBuffer packet = new ByteBuffer())
             {
                 packet.Append((byte)2);
                 packet.Append(0x00084400);
@@ -88,7 +93,7 @@ namespace Whisper.Daemon.Shard.Commands
                 packet.Append(0x00000003);
 
                 session.Send(ShardServerOpcode.SetProficiency, packet);
-            }
+            }*/
 
             // send logon player response packet
             using (ByteBuffer packet = new ByteBuffer())
@@ -108,11 +113,14 @@ namespace Whisper.Daemon.Shard.Commands
             // update bind point
             using (ByteBuffer packet = new ByteBuffer())
             {
-                packet.Append(-8949.95f); // x
-                packet.Append(-132.493f); // y
-                packet.Append(-83.5312f); // z
-                packet.Append(0); // map id
-                packet.Append(12); // zone id
+                // TODO: implement bind point other than initial world position
+                CharacterTemplate ct = session.Server.World.CharacterTemplates[player.Race][player.Class];
+
+                packet.Append(ct.PositionX); // x
+                packet.Append(ct.PositionY); // y
+                packet.Append(ct.PositionZ); // z
+                packet.Append(ct.MapID); // map id
+                packet.Append(ct.ZoneID); // zone id
 
                 session.Send(ShardServerOpcode.BindPointUpdate, packet);
             }
@@ -181,7 +189,7 @@ namespace Whisper.Daemon.Shard.Commands
             }
 
             // trigger cinematic
-            //session.Send(ShardServerOpcode.TriggerCinematic, BitConverter.GetBytes(0x00000051));
+            session.Send(ShardServerOpcode.TriggerCinematic, BitConverter.GetBytes(rd.FirstLoginCinematicID));
 
             // send object state
             using (ByteBuffer packet = new ByteBuffer())
@@ -190,7 +198,6 @@ namespace Whisper.Daemon.Shard.Commands
                 {
                     player.BuildTargetedCreationUpdate(updateData, player);
                     updateData.Append(packet);
-                    //packet.Append(Strings.HexDumpToBytes(MagicUpdateObject2));
 
                     session.Send(ShardServerOpcode.ObjectUpdate, packet);
                 }
@@ -215,120 +222,6 @@ namespace Whisper.Daemon.Shard.Commands
 
                 session.Send(ShardServerOpcode.InitializeWorldState, packet);
             }
-
-            // send login effect spell
-            /*byte[] loginEffectSpellGo = new byte[] { 01, 02, 01, 02, 0x44, 03, 00, 00, 00, 01, 01, 02, 00, 00, 00, 00, 00, 00, 00, 00, 02, 00, 01, 02 };
-            session.Send(ShardServerOpcode.SpellGo, loginEffectSpellGo);*/
         }
-
-        // magic oracle packet
-        private const string MagicUpdateObject =
-@"09 00 00 00 00 02 81 16 40 01 10 01 00 00 00 02
-5F 41 00 00 00 00 00 00 16 00 00 00 00 00 00 40
-03 00 00 00 D0 17 00 00 00 00 80 3F 02 00 00 00
-02 00 00 00 01 00 00 00 02 81 0E 40 01 10 01 00
-00 00 02 5F 41 00 00 00 C0 00 00 0E 00 00 00 00
-00 00 40 03 00 00 00 38 00 00 00 00 00 80 3F 02
-00 00 00 02 00 00 00 01 00 00 00 23 00 00 00 23
-00 00 00 02 81 10 40 01 10 01 00 00 00 02 5F 41
-00 00 00 C0 00 00 10 00 00 00 00 00 00 40 03 00
-00 00 73 05 00 00 00 00 80 3F 02 00 00 00 02 00
-00 00 01 00 00 00 19 00 00 00 19 00 00 00 02 81
-12 40 01 10 01 00 00 00 02 5F 41 00 00 00 00 00
-00 12 00 00 00 00 00 00 40 03 00 00 00 37 00 00
-00 00 00 80 3F 02 00 00 00 02 00 00 00 01 00 00
-00 02 81 14 40 01 10 01 00 00 00 02 5F 41 00 00
-00 C0 00 00 14 00 00 00 00 00 00 40 03 00 00 00
-23 00 00 00 00 00 80 3F 02 00 00 00 02 00 00 00
-01 00 00 00 19 00 00 00 19 00 00 00 02 81 18 40
-01 10 01 00 00 00 02 5F 41 01 00 00 00 00 00 18
-00 00 00 00 00 00 40 03 00 00 00 16 08 00 00 00
-00 80 3F 02 00 00 00 02 00 00 00 05 00 00 00 FF
-FF FF FF 02 81 1A 40 01 10 01 00 00 00 02 5F 41
-01 00 00 00 00 00 1A 00 00 00 00 00 00 40 03 00
-00 00 9F 00 00 00 00 00 80 3F 02 00 00 00 02 00
-00 00 05 00 00 00 FF FF FF FF 02 81 1C 40 01 10
-01 00 00 00 02 5F 41 20 00 00 00 00 00 1C 00 00
-00 00 00 00 40 03 00 00 00 24 1B 00 00 00 00 80
-3F 02 00 00 00 02 00 00 00 01 00 00 00 01 00 00
-00 03 01 02 04 71 00 00 00 00 00 00 00 00 CD D7
-0B C6 35 7E 04 C3 F9 0F A7 42 FD 97 56 3B 00 00
-00 00 00 00 20 40 00 00 E0 40 00 00 90 40 71 1C
-97 40 00 00 20 40 E0 0F 49 40 01 00 00 00 29 15
-00 C0 74 1D 40 00 00 00 00 00 00 00 00 00 C0 DF
-04 C2 0F 3C 19 00 00 0E 00 00 00 00 00 00 00 00
-00 00 00 00 01 10 00 00 10 00 01 00 00 00 00 00
-00 00 00 00 00 00 01 00 00 00 00 00 F0 3C 00 30
-00 F0 03 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 E0 B6 6D 1B 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 80 68 04 00 00 00 00 00
-00 80 00 00 00 00 80 3F 00 00 00 00 20 00 00 00
-00 00 00 02 00 00 00 19 00 00 00 00 00 80 3F 33
-00 00 00 A5 00 00 00 64 00 00 00 33 00 00 00 A5
-00 00 00 E8 03 00 00 64 00 00 00 01 00 00 00 01
-00 00 00 01 08 01 00 08 00 00 00 54 0B 00 00 D0
-07 00 00 D0 07 00 00 F4 FD 54 3E 00 00 C0 3F 32
-00 00 00 32 00 00 00 25 49 A2 40 25 49 E2 40 00
-EE 00 00 00 00 80 3F 14 00 00 00 14 00 00 00 14
-00 00 00 17 00 00 00 17 00 00 00 2D 00 00 00 64
-00 00 00 1F 00 00 00 00 28 00 00 0A 00 00 00 0A
-00 00 00 B7 6D 1B 40 B7 6D 5B 40 01 05 05 05 00
-00 00 02 01 00 00 00 D0 17 00 00 38 00 00 00 73
-05 00 00 37 00 00 00 23 00 00 00 16 00 00 00 00
-00 00 40 0E 00 00 00 00 00 00 40 10 00 00 00 00
-00 00 40 12 00 00 00 00 00 00 40 14 00 00 00 00
-00 00 40 18 00 00 00 00 00 00 40 1A 00 00 00 00
-00 00 40 1C 00 00 00 00 00 00 40 90 01 00 00 06
-00 00 00 01 00 01 00 08 00 00 00 01 00 01 00 5F
-00 00 00 01 00 05 00 62 00 00 00 2C 01 2C 01 88
-00 00 00 01 00 05 00 A2 00 00 00 01 00 05 00 E4
-00 00 00 01 00 05 00 9F 01 00 00 01 00 01 00 02
-00 00 00 3E 0A 57 3F 1C 6A 5E 3F AB 2C 54 3F 00
-00 00 20 07 00 00 00 00 00 80 3F 00 00 80 3F 00
-00 80 3F 00 00 80 3F 00 00 80 3F 00 00 80 3F 00
-00 80 3F FF FF FF FF";
-
-        private const string MagicUpdateObject2 =
- @"01 00 00 00 00
-   03 01 02 04 71 00 00 00 00 00 00 00 00 CD D7
-0B C6 35 7E 04 C3 F9 0F A7 42 FD 97 56 3B 00 00
-00 00 00 00 20 40 00 00 E0 40 00 00 90 40 71 1C
-97 40 00 00 20 40 E0 0F 49 40 01 00 00 00 29 15
-00 C0 74 1D 40 00 00 00 00 00 00 00 00 00 C0 DF
-04 C2 0F 3C 19 00 00 0E 00 00 00 00 00 00 00 00
-00 00 00 00 01 10 00 00 10 00 01 00 00 00 00 00
-00 00 00 00 00 00 01 00 00 00 00 00 F0 3C 00 30
-00 F0 03 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 E0 B6 6D 1B 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 80 68 04 00 00 00 00 00
-00 80 00 00 00 00 80 3F 00 00 00 00 20 00 00 00
-00 00 00 02 00 00 00 19 00 00 00 00 00 80 3F 33
-00 00 00 A5 00 00 00 64 00 00 00 33 00 00 00 A5
-00 00 00 E8 03 00 00 64 00 00 00 01 00 00 00 01
-00 00 00 01 08 01 00 08 00 00 00 54 0B 00 00 D0
-07 00 00 D0 07 00 00 F4 FD 54 3E 00 00 C0 3F 32
-00 00 00 32 00 00 00 25 49 A2 40 25 49 E2 40 00
-EE 00 00 00 00 80 3F 14 00 00 00 14 00 00 00 14
-00 00 00 17 00 00 00 17 00 00 00 2D 00 00 00 64
-00 00 00 1F 00 00 00 00 28 00 00 0A 00 00 00 0A
-00 00 00 B7 6D 1B 40 B7 6D 5B 40 01 05 05 05 00
-00 00 02 01 00 00 00 D0 17 00 00 38 00 00 00 73
-05 00 00 37 00 00 00 23 00 00 00 16 00 00 00 00
-00 00 40 0E 00 00 00 00 00 00 40 10 00 00 00 00
-00 00 40 12 00 00 00 00 00 00 40 14 00 00 00 00
-00 00 40 18 00 00 00 00 00 00 40 1A 00 00 00 00
-00 00 40 1C 00 00 00 00 00 00 40 90 01 00 00 06
-00 00 00 01 00 01 00 08 00 00 00 01 00 01 00 5F
-00 00 00 01 00 05 00 62 00 00 00 2C 01 2C 01 88
-00 00 00 01 00 05 00 A2 00 00 00 01 00 05 00 E4
-00 00 00 01 00 05 00 9F 01 00 00 01 00 01 00 02
-00 00 00 3E 0A 57 3F 1C 6A 5E 3F AB 2C 54 3F 00
-00 00 20 07 00 00 00 00 00 80 3F 00 00 80 3F 00
-00 80 3F 00 00 80 3F 00 00 80 3F 00 00 80 3F 00
-00 80 3F FF FF FF FF";
     }
 }

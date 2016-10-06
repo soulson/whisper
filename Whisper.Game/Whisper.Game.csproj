@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Characters\ActionButton.cs" />
+    <Compile Include="Units\RaceDefinition.cs" />
     <Compile Include="Characters\RestState.cs" />
     <Compile Include="Units\Class.cs" />
     <Compile Include="Characters\CharacterException.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Units\Form.cs" />
     <Compile Include="Units\Loyalty.cs" />
     <Compile Include="Units\Race.cs" />
+    <Compile Include="Units\RaceFlags.cs" />
     <Compile Include="Units\Sex.cs" />
     <Compile Include="Characters\CharacterTemplate.cs" />
     <Compile Include="Characters\EquipmentSlot.cs" />

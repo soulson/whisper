@@ -41,6 +41,7 @@ namespace Whisper.Game.World
         /// <param name="wworld">A datasource to a static world database. Needs read access only. The SQL used to initialize this database is located under Whisper.Daemon.Shard.SQL.World.</param>
         public World(IWhisperDatasource wworld)
         {
+            LoadRaceDefinitions(wworld);
             LoadCharacterTemplates(wworld);
         }
 
@@ -86,11 +87,39 @@ namespace Whisper.Game.World
                 CharacterTemplates = templates;
             });
         }
-        
+
+        private void LoadRaceDefinitions(IWhisperDatasource datasource)
+        {
+            log.Info("loading race definitions...");
+            datasource.ExecuteQuery("select id, name, flags, display_id_male, display_id_female, first_login_cinematic_id, faction_id from race_definition", reader =>
+            {
+                var defs = new Dictionary<Race, RaceDefinition>();
+
+                while (reader.Read())
+                {
+                    RaceDefinition rd = new RaceDefinition((Race)reader.GetByte(0), reader.GetString(1), reader.GetInt32(6), (RaceFlags)reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5));
+                    defs.Add(rd.Race, rd);
+
+                    log.DebugFormat("loaded race definition for {0}", rd.Name);
+                }
+
+                RaceDefinitions = defs;
+            });
+        }
+
         /// <summary>
-        /// Gets a mapping from CharacterRace and CharacterClass to a CharacterTemplate describing the starting state for characters of that race and class.
+        /// Gets a mapping from Race and Class to a CharacterTemplate describing the starting state for characters of that race and class.
         /// </summary>
         public IDictionary<Race, IDictionary<Class, CharacterTemplate>> CharacterTemplates
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets a mapping from Race to a RaceDefinition describing properties of that race.
+        /// </summary>
+        public IDictionary<Race, RaceDefinition> RaceDefinitions
         {
             get;
             private set;

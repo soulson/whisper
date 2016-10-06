@@ -64,9 +64,6 @@ namespace Whisper.Game.Characters
             SetField(UnitFields.Stamina, 20);
             SetField(UnitFields.Intellect, 23);
             SetField(UnitFields.Spirit, 23);
-            SetField(UnitFields.DisplayID, 50);
-            SetField(UnitFields.NativeDisplayID, 50);
-            SetField(UnitFields.FactionTemplate, 1);
             SetField(UnitFields.AttackTimeBase, 2000);
             SetField(UnitFields.AttackTimeOffhand, 2000);
             SetField(UnitFields.AttackTimeRanged, 2000);
@@ -109,6 +106,12 @@ namespace Whisper.Game.Characters
         public override string ToString()
         {
             return Name;
+        }
+
+        protected override void OnSexChanged()
+        {
+            base.OnSexChanged();
+            SetField((ushort)CharacterFields.Bytes3, 0, (byte)Sex);
         }
 
         #region Character Fields
@@ -181,20 +184,6 @@ namespace Whisper.Game.Characters
             set
             {
                 SetField((ushort)CharacterFields.Bytes2, 3, (byte)value);
-            }
-        }
-
-        public override Sex Sex
-        {
-            get
-            {
-                return base.Sex;
-            }
-
-            set
-            {
-                base.Sex = value;
-                SetField((ushort)CharacterFields.Bytes3, 0, (byte)value);
             }
         }
 

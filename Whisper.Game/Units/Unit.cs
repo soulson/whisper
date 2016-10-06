@@ -40,6 +40,20 @@ namespace Whisper.Game.Units
             RageMax = 1000;
         }
 
+        #region Field Virtualizers
+        protected virtual void OnRaceChanged()
+        {
+        }
+
+        protected virtual void OnSexChanged()
+        {
+        }
+
+        protected virtual void OnClassChanged()
+        {
+        }
+        #endregion
+
         #region Unit Fields
         public int Health
         {
@@ -494,6 +508,7 @@ namespace Whisper.Game.Units
             set
             {
                 SetField((ushort)UnitFields.Bytes0, 0, (byte)value);
+                OnRaceChanged();
             }
         }
 
@@ -506,13 +521,11 @@ namespace Whisper.Game.Units
             set
             {
                 SetField((ushort)UnitFields.Bytes0, 1, (byte)value);
+                OnClassChanged();
             }
         }
-
-        /// <remarks>
-        /// Virtual because Character has another field that duplicates this one, so it can override this to set both.
-        /// </remarks>
-        public virtual Sex Sex
+        
+        public Sex Sex
         {
             get
             {
@@ -521,6 +534,7 @@ namespace Whisper.Game.Units
             set
             {
                 SetField((ushort)UnitFields.Bytes0, 2, (byte)value);
+                OnSexChanged();
             }
         }
 

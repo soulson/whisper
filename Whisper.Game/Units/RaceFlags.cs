@@ -20,9 +20,12 @@ using System;
 
 namespace Whisper.Game.Units
 {
-    public enum Sex : byte
+    [Flags]
+    public enum RaceFlags : int
     {
-        Male = 0,
-        Female = 1,
+        None = 0x00,
+        NotPlayable = 0x01,
+        BareFeet = 0x02,
+        CanMount = 0x04,
     }
 }
