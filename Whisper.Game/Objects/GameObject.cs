@@ -289,20 +289,13 @@ namespace Whisper.Game.Objects
                 SetField((ushort)UnitFields.DisplayID, 50);
                 SetField((ushort)UnitFields.NativeDisplayID, 50);
                 SetField((ushort)UnitFields.FactionTemplate, 1);
-                SetField((ushort)UnitFields.AttackTimeBase, 2900);
+                SetField((ushort)UnitFields.AttackTimeBase, 2000);
                 SetField((ushort)UnitFields.AttackTimeOffhand, 2000);
                 SetField((ushort)UnitFields.AttackTimeRanged, 2000);
                 SetField((ushort)UnitFields.BoundingRadius, 0.208f);
                 SetField((ushort)UnitFields.CombatReach, 1.5f);
-                SetField((ushort)UnitFields.DamageMin, 5.0f);
-                SetField((ushort)UnitFields.DamageMax, 7.0f);
-                SetField((ushort)UnitFields.Armor, 45);
                 SetField((ushort)UnitFields.BaseMana, 100);
                 SetField((ushort)UnitFields.BaseHealth, 31);
-                SetField((ushort)UnitFields.AttackPowerRanged, 10);
-                SetField((ushort)UnitFields.AttackPower, 10);
-                SetField((ushort)UnitFields.DamageRangedMax, 3.4f);
-                SetField((ushort)UnitFields.DamageRangedMin, 2.4f);
                 SetField((ushort)CharacterFields.XPNextLevel, 400);
 
                 UpdateMask updateMask = BuildCreationUpdateMask();
