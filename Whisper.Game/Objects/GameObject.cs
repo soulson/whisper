@@ -304,24 +304,6 @@ namespace Whisper.Game.Objects
                 SetField((ushort)UnitFields.DamageRangedMax, 3.4f);
                 SetField((ushort)UnitFields.DamageRangedMin, 2.4f);
                 SetField((ushort)CharacterFields.XPNextLevel, 400);
-                SetField((ushort)CharacterFields.CharacterPoints2, 2);
-
-                SetField((ushort)CharacterFields.SkillInfoFirst1, 0x00000006);
-                SetField((ushort)0x02cf, 0x00010001);
-                SetField((ushort)0x02d1, 0x00000008);
-                SetField((ushort)0x02d2, 0x00010001);
-                SetField((ushort)0x02d4, 0x0000005f);
-                SetField((ushort)0x02d5, 0x00050001);
-                SetField((ushort)0x02d7, 0x00000062);
-                SetField((ushort)0x02d8, 0x012c012c);
-                SetField((ushort)0x02da, 0x00000088);
-                SetField((ushort)0x02db, 0x00050001);
-                SetField((ushort)0x02dd, 0x000000a2);
-                SetField((ushort)0x02de, 0x00050001);
-                SetField((ushort)0x02e0, 0x000000e4);
-                SetField((ushort)0x02e1, 0x00050001);
-                SetField((ushort)0x02e3, 0x0000019f);
-                SetField((ushort)0x02e4, 0x00010001);
 
                 UpdateMask updateMask = BuildCreationUpdateMask();
                 log.DebugFormat("create updatemask block count is 0x{0:x2}", updateMask.BlockCount);
