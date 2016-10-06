@@ -480,27 +480,51 @@ namespace Whisper.Game.Units
             }
         }
 
-        public UnitFlags1 UnitFlags1
+        public Race Race
         {
             get
             {
-                return (UnitFlags1)GetFieldByte((ushort)UnitFields.Bytes1, 3);
+                return (Race)GetFieldByte((ushort)UnitFields.Bytes0, 0);
             }
             set
             {
-                SetField((ushort)UnitFields.Bytes1, 3, (byte)value);
+                SetField((ushort)UnitFields.Bytes0, 0, (byte)value);
             }
         }
 
-        public UnitFlags2 UnitFlags2
+        public Class Class
         {
             get
             {
-                return (UnitFlags2)GetFieldByte((ushort)UnitFields.Bytes2, 1);
+                return (Class)GetFieldByte((ushort)UnitFields.Bytes0, 1);
             }
             set
             {
-                SetField((ushort)UnitFields.Bytes2, 1, (byte)value);
+                SetField((ushort)UnitFields.Bytes0, 1, (byte)value);
+            }
+        }
+
+        public Sex Sex
+        {
+            get
+            {
+                return (Sex)GetFieldByte((ushort)UnitFields.Bytes0, 2);
+            }
+            set
+            {
+                SetField((ushort)UnitFields.Bytes0, 2, (byte)value);
+            }
+        }
+
+        public Resource ActiveResource
+        {
+            get
+            {
+                return (Resource)GetFieldByte((ushort)UnitFields.Bytes0, 3);
+            }
+            set
+            {
+                SetField((ushort)UnitFields.Bytes0, 3, (byte)value);
             }
         }
 
@@ -516,6 +540,42 @@ namespace Whisper.Game.Units
             }
         }
 
+        public Loyalty Loyalty
+        {
+            get
+            {
+                return (Loyalty)GetFieldByte((ushort)UnitFields.Bytes1, 1);
+            }
+            set
+            {
+                SetField((ushort)UnitFields.Bytes1, 1, (byte)value);
+            }
+        }
+
+        public Form Form
+        {
+            get
+            {
+                return (Form)GetFieldByte((ushort)UnitFields.Bytes1, 2);
+            }
+            set
+            {
+                SetField((ushort)UnitFields.Bytes1, 2, (byte)value);
+            }
+        }
+
+        public UnitFlags1 UnitFlags1
+        {
+            get
+            {
+                return (UnitFlags1)GetFieldByte((ushort)UnitFields.Bytes1, 3);
+            }
+            set
+            {
+                SetField((ushort)UnitFields.Bytes1, 3, (byte)value);
+            }
+        }
+
         public SheathState SheathState
         {
             get
@@ -528,15 +588,15 @@ namespace Whisper.Game.Units
             }
         }
 
-        public Resource ActiveResource
+        public UnitFlags2 UnitFlags2
         {
             get
             {
-                return (Resource)GetFieldByte((ushort)UnitFields.Bytes0, 3);
+                return (UnitFlags2)GetFieldByte((ushort)UnitFields.Bytes2, 1);
             }
             set
             {
-                SetField((ushort)UnitFields.Bytes0, 3, (byte)value);
+                SetField((ushort)UnitFields.Bytes2, 1, (byte)value);
             }
         }
         #endregion
