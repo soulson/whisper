@@ -34,6 +34,15 @@ namespace Whisper.Game.Characters
             Spells = spells;
             Name = name;
 
+            // initialize default values
+            DamageDoneArcaneMultiplier = 1.0f;
+            DamageDoneFrostMultiplier = 1.0f;
+            DamageDoneFireMultiplier = 1.0f;
+            DamageDoneNatureMultiplier = 1.0f;
+            DamageDoneShadowMultiplier = 1.0f;
+            DamageDoneHolyMultiplier = 1.0f;
+            DamageDonePhysicalMultiplier = 1.0f;
+
             UnitFlags |= UnitFlags.PvPUnit;
 
             // TODO: instead of 0x18 as described here, this field has value 0x28 for players. need to determine the difference
@@ -43,15 +52,6 @@ namespace Whisper.Game.Characters
             // TODO: these need to be updated as implemented
             RestState = RestState.Normal;
             WatchedFactionIndex = -1;
-
-            // initialize default values
-            DamageDoneArcaneMultiplier = 1.0f;
-            DamageDoneFrostMultiplier = 1.0f;
-            DamageDoneFireMultiplier = 1.0f;
-            DamageDoneNatureMultiplier = 1.0f;
-            DamageDoneShadowMultiplier = 1.0f;
-            DamageDoneHolyMultiplier = 1.0f;
-            DamageDonePhysicalMultiplier = 1.0f;
 
             // TODO: remove magic values
             SetField(UnitFields.Health, 51);

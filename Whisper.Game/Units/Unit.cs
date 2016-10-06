@@ -17,7 +17,6 @@
  */
 
 using System;
-using Whisper.Game.Characters;
 using Whisper.Game.Objects;
 using Whisper.Shared.Utility;
 
