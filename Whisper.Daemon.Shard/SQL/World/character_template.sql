@@ -12,7 +12,9 @@ create table character_template (
     orientation float not null,
     
     primary key (id),
-    unique key idx_race_class (race, class)
+    unique key idx_race_class (race, class),
+
+	foreign key (race) references race_definition (id)
 );
 
 insert into character_template
