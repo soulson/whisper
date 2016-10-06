@@ -250,6 +250,19 @@ namespace Whisper.Game.Objects
 
         }
 
+        protected virtual void AppendValuesUpdate(ByteBuffer buffer, ObjectUpdateType updateType, ObjectUpdateFlags updateFlags, UpdateMask updateMask)
+        {
+            buffer.Append(updateMask.BlockCount);
+            buffer.Append(updateMask.Data);
+
+            // write the value set
+            for (ushort i = 0; i < FieldCount; ++i)
+            {
+                if (updateMask.GetBit(i))
+                    buffer.Append(GetFieldUnsigned(i));
+            }
+        }
+
         public void BuildTargetedCreationUpdate(UpdateData data, Character character)
         {
             // TODO: review how to pick which CreateObject to use
@@ -277,38 +290,8 @@ namespace Whisper.Game.Objects
                     buffer.Append(1); // ?
 
                 // values update
-                SetField((ushort)UnitFields.Health, 51);
-                SetField((ushort)UnitFields.Mana, 165);
-                SetField((ushort)UnitFields.MaxHealth, 51);
-                SetField((ushort)UnitFields.MaxMana, 165);
-                SetField((ushort)UnitFields.Strength, 20);
-                SetField((ushort)UnitFields.Agility, 20);
-                SetField((ushort)UnitFields.Stamina, 20);
-                SetField((ushort)UnitFields.Intellect, 23);
-                SetField((ushort)UnitFields.Spirit, 23);
-                SetField((ushort)UnitFields.DisplayID, 50);
-                SetField((ushort)UnitFields.NativeDisplayID, 50);
-                SetField((ushort)UnitFields.FactionTemplate, 1);
-                SetField((ushort)UnitFields.AttackTimeBase, 2000);
-                SetField((ushort)UnitFields.AttackTimeOffhand, 2000);
-                SetField((ushort)UnitFields.AttackTimeRanged, 2000);
-                SetField((ushort)UnitFields.BoundingRadius, 0.208f);
-                SetField((ushort)UnitFields.CombatReach, 1.5f);
-                SetField((ushort)UnitFields.BaseMana, 100);
-                SetField((ushort)UnitFields.BaseHealth, 31);
-                SetField((ushort)CharacterFields.XPNextLevel, 400);
-
                 UpdateMask updateMask = BuildCreationUpdateMask();
-                log.DebugFormat("create updatemask block count is 0x{0:x2}", updateMask.BlockCount);
-                buffer.Append(updateMask.BlockCount);
-                buffer.Append(updateMask.Data);
-
-                // write the value set
-                for (ushort i = 0; i < FieldCount; ++i)
-                {
-                    if (updateMask.GetBit(i))
-                        buffer.Append(GetFieldUnsigned(i));
-                }
+                AppendValuesUpdate(buffer, updateType, updateFlags, updateMask);
 
                 // append the update
                 data.AddUpdateBlock(buffer);

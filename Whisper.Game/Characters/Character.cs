@@ -44,6 +44,7 @@ namespace Whisper.Game.Characters
             RestState = RestState.Normal;
             WatchedFactionIndex = -1;
 
+            // initialize default values
             DamageDoneArcaneMultiplier = 1.0f;
             DamageDoneFrostMultiplier = 1.0f;
             DamageDoneFireMultiplier = 1.0f;
@@ -51,6 +52,28 @@ namespace Whisper.Game.Characters
             DamageDoneShadowMultiplier = 1.0f;
             DamageDoneHolyMultiplier = 1.0f;
             DamageDonePhysicalMultiplier = 1.0f;
+
+            // TODO: remove magic values
+            SetField(UnitFields.Health, 51);
+            SetField(UnitFields.Mana, 165);
+            SetField(UnitFields.MaxHealth, 51);
+            SetField(UnitFields.MaxMana, 165);
+            SetField(UnitFields.Strength, 20);
+            SetField(UnitFields.Agility, 20);
+            SetField(UnitFields.Stamina, 20);
+            SetField(UnitFields.Intellect, 23);
+            SetField(UnitFields.Spirit, 23);
+            SetField(UnitFields.DisplayID, 50);
+            SetField(UnitFields.NativeDisplayID, 50);
+            SetField(UnitFields.FactionTemplate, 1);
+            SetField(UnitFields.AttackTimeBase, 2000);
+            SetField(UnitFields.AttackTimeOffhand, 2000);
+            SetField(UnitFields.AttackTimeRanged, 2000);
+            SetField(UnitFields.BoundingRadius, 0.208f);
+            SetField(UnitFields.CombatReach, 1.5f);
+            SetField(UnitFields.BaseMana, 100);
+            SetField(UnitFields.BaseHealth, 31);
+            SetField(CharacterFields.XPNextLevel, 400);
         }
 
         public string Name
