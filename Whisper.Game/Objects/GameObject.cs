@@ -308,11 +308,6 @@ namespace Whisper.Game.Objects
 
                 SetField((ushort)0x045a, 0x20000000);
                 
-                SetField((ushort)0x0128, 0x000017d0);
-                SetField((ushort)0x0134, 0x00000038);
-                SetField((ushort)0x014c, 0x00000573);
-                SetField((ushort)0x0158, 0x00000037);
-                SetField((ushort)0x01b8, 0x00000023);
                 SetField((ushort)0x01ec, 0x00000016);
                 SetField((ushort)0x01ed, 0x40000000);
                 SetField((ushort)0x01ee, 0x0000000e);
