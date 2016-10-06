@@ -306,8 +306,6 @@ namespace Whisper.Game.Objects
                 SetField((ushort)CharacterFields.XPNextLevel, 400);
                 SetField((ushort)CharacterFields.CharacterPoints2, 2);
 
-                SetField((ushort)0x045a, 0x20000000);
-
                 SetField((ushort)CharacterFields.SkillInfoFirst1, 0x00000006);
                 SetField((ushort)0x02cf, 0x00010001);
                 SetField((ushort)0x02d1, 0x00000008);
