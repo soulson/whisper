@@ -34,6 +34,8 @@ namespace Whisper.Game.Characters
             Spells = spells;
             Name = name;
 
+            UnitFlags |= UnitFlags.PvPUnit;
+
             // TODO: instead of 0x18 as described here, this field has value 0x28 for players. need to determine the difference
             UnitFlags2 |= UnitFlags2.Supportable;
             UnitFlags2 |= UnitFlags2.CanHaveAuras;

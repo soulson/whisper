@@ -252,7 +252,8 @@ namespace Whisper.Game.Objects
 
         public void BuildTargetedCreationUpdate(UpdateData data, Character character)
         {
-            ObjectUpdateType updateType = ObjectUpdateType.CreateObject2; // review how to pick which CreateObject to use
+            // TODO: review how to pick which CreateObject to use
+            ObjectUpdateType updateType = ObjectUpdateType.CreateObject2;
             ObjectUpdateFlags updateFlags = UpdateFlags;
 
             if (character == this)
@@ -280,11 +281,6 @@ namespace Whisper.Game.Objects
                 SetField((ushort)UnitFields.Mana, 165);
                 SetField((ushort)UnitFields.MaxHealth, 51);
                 SetField((ushort)UnitFields.MaxMana, 165);
-                SetField((ushort)UnitFields.Energy, 100);
-                SetField((ushort)UnitFields.MaxRage, 1000);
-                SetField((ushort)UnitFields.MaxEnergy, 100);
-                SetField((ushort)UnitFields.Flags, 0x8);
-                SetField((ushort)UnitFields.Level, 1);
                 SetField((ushort)UnitFields.Strength, 20);
                 SetField((ushort)UnitFields.Agility, 20);
                 SetField((ushort)UnitFields.Stamina, 20);
@@ -300,7 +296,6 @@ namespace Whisper.Game.Objects
                 SetField((ushort)UnitFields.CombatReach, 1.5f);
                 SetField((ushort)UnitFields.DamageMin, 5.0f);
                 SetField((ushort)UnitFields.DamageMax, 7.0f);
-                SetField((ushort)UnitFields.ModCastSpeed, 1.0f);
                 SetField((ushort)UnitFields.Armor, 45);
                 SetField((ushort)UnitFields.BaseMana, 100);
                 SetField((ushort)UnitFields.BaseHealth, 31);

@@ -33,6 +33,12 @@ namespace Whisper.Game.Units
         {
             MovementFlags = MovementFlags.None;
             MovementSpeed = new MovementSpeed();
+
+            CastSpeed = 1.0f;
+
+            Energy = 100;
+            EnergyMax = 100;
+            RageMax = 1000;
         }
 
         #region Unit Fields
