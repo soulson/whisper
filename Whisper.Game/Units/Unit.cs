@@ -33,11 +33,14 @@ namespace Whisper.Game.Units
             MovementFlags = MovementFlags.None;
             MovementSpeed = new MovementSpeed();
 
+            // initialize default values
             CastSpeed = 1.0f;
-
             Energy = 100;
             EnergyMax = 100;
             RageMax = 1000;
+            AttackTimeMainhandMilliseconds = 2000;
+            AttackTimeOffhandMilliseconds = 2000;
+            AttackTimeRangedMilliseconds = 2000;
         }
 
         #region Field Virtualizers

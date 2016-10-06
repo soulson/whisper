@@ -64,9 +64,6 @@ namespace Whisper.Game.Characters
             SetField(UnitFields.Stamina, 20);
             SetField(UnitFields.Intellect, 23);
             SetField(UnitFields.Spirit, 23);
-            SetField(UnitFields.AttackTimeBase, 2000);
-            SetField(UnitFields.AttackTimeOffhand, 2000);
-            SetField(UnitFields.AttackTimeRanged, 2000);
             SetField(UnitFields.BoundingRadius, 0.208f);
             SetField(UnitFields.BaseMana, 100);
             SetField(UnitFields.BaseHealth, 31);
