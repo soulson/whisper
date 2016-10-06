@@ -304,23 +304,10 @@ namespace Whisper.Game.Objects
                 SetField((ushort)UnitFields.DamageRangedMax, 3.4f);
                 SetField((ushort)UnitFields.DamageRangedMin, 2.4f);
                 SetField((ushort)CharacterFields.XPNextLevel, 400);
-                SetField((ushort)CharacterFields.XPRestState, 7);
                 SetField((ushort)CharacterFields.CharacterPoints2, 2);
-                SetField((ushort)CharacterFields.DodgePercent, 0.84f);
-                SetField((ushort)CharacterFields.CritPercent, 0.87f);
-                SetField((ushort)CharacterFields.CritPercentRanged, 0.83f);
 
                 SetField((ushort)0x045a, 0x20000000);
-
-                SetField((ushort)CharacterFields.DamageDoneModPercent, 1.0f);
-                SetField((ushort)CharacterFields.DamageDoneModPercent + 1, 1.0f);
-                SetField((ushort)CharacterFields.DamageDoneModPercent + 2, 1.0f);
-                SetField((ushort)CharacterFields.DamageDoneModPercent + 3, 1.0f);
-                SetField((ushort)CharacterFields.DamageDoneModPercent + 4, 1.0f);
-                SetField((ushort)CharacterFields.DamageDoneModPercent + 5, 1.0f);
-                SetField((ushort)CharacterFields.DamageDoneModPercent + 6, 1.0f);
-                SetField((ushort)CharacterFields.WatchedFactionIndex, -1);
-
+                
                 SetField((ushort)0x0128, 0x000017d0);
                 SetField((ushort)0x0134, 0x00000038);
                 SetField((ushort)0x014c, 0x00000573);

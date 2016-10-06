@@ -88,14 +88,20 @@ namespace Whisper.Game.Characters
         ResistanceBuffModsNegative0 = 0x3EE + UnitFields.END, // Size:7
         DamageDoneModPos = 0x3F5 + UnitFields.END, // Size:7
         DamageDoneModNeg = 0x3FC + UnitFields.END, // Size:7
-        DamageDoneModPercent = 0x403 + UnitFields.END, // Size:7
-        Bytes4 = 0x40A + UnitFields.END, // Size:1
-        AmmoID = 0x40B + UnitFields.END, // Size:1
-        SelfResSpell = 0x40C + UnitFields.END, // Size:1
-        PvpMedals = 0x40D + UnitFields.END, // Size:1
-        BuybackPriceFirst = 0x40E + UnitFields.END, // count=12
+        DamageDonePhysicalModPercent = 0x403 + UnitFields.END, // Size:1
+        DamageDoneHolyModPercent = 0x404 + UnitFields.END, // Size:1
+        DamageDoneFireModPercent = 0x405 + UnitFields.END, // Size:1
+        DamageDoneNatureModPercent = 0x406 + UnitFields.END, // Size:1
+        DamageDoneFrostModPercent = 0x407 + UnitFields.END, // Size:1
+        DamageDoneShadowModPercent = 0x408 + UnitFields.END, // Size:1
+        DamageDoneArcaneModPercent = 0x409 + UnitFields.END, // Size:1
+        Bytes4 = 0x40a + UnitFields.END, // Size:1
+        AmmoID = 0x40b + UnitFields.END, // Size:1
+        SelfResSpell = 0x40c + UnitFields.END, // Size:1
+        PvpMedals = 0x40d + UnitFields.END, // Size:1
+        BuybackPriceFirst = 0x40e + UnitFields.END, // count=12
         BuybackPriceLast = 0x419 + UnitFields.END,
-        BuybackTimestampFirst = 0x41A + UnitFields.END, // count=12
+        BuybackTimestampFirst = 0x41a + UnitFields.END, // count=12
         BuybackTimestampLast = 0x425 + UnitFields.END,
         HKsSession = 0x426 + UnitFields.END, // Size:1
         HKsYesterday = 0x427 + UnitFields.END, // Size:1

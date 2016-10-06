@@ -40,8 +40,17 @@ namespace Whisper.Game.Characters
             UnitFlags2 |= UnitFlags2.Supportable;
             UnitFlags2 |= UnitFlags2.CanHaveAuras;
 
-            // TODO: need to change this when rest is implemented
+            // TODO: these need to be updated as implemented
             RestState = RestState.Normal;
+            WatchedFactionIndex = -1;
+
+            DamageDoneArcaneMultiplier = 1.0f;
+            DamageDoneFrostMultiplier = 1.0f;
+            DamageDoneFireMultiplier = 1.0f;
+            DamageDoneNatureMultiplier = 1.0f;
+            DamageDoneShadowMultiplier = 1.0f;
+            DamageDoneHolyMultiplier = 1.0f;
+            DamageDonePhysicalMultiplier = 1.0f;
         }
 
         public string Name
@@ -163,6 +172,150 @@ namespace Whisper.Game.Characters
             {
                 base.Sex = value;
                 SetField((ushort)CharacterFields.Bytes3, 0, (byte)value);
+            }
+        }
+
+        public float DamageDonePhysicalMultiplier
+        {
+            get
+            {
+                return GetFieldFloat(CharacterFields.DamageDonePhysicalModPercent);
+            }
+            set
+            {
+                SetField(CharacterFields.DamageDonePhysicalModPercent, value);
+            }
+        }
+
+        public float DamageDoneHolyMultiplier
+        {
+            get
+            {
+                return GetFieldFloat(CharacterFields.DamageDoneHolyModPercent);
+            }
+            set
+            {
+                SetField(CharacterFields.DamageDoneHolyModPercent, value);
+            }
+        }
+
+        public float DamageDoneFireMultiplier
+        {
+            get
+            {
+                return GetFieldFloat(CharacterFields.DamageDoneFireModPercent);
+            }
+            set
+            {
+                SetField(CharacterFields.DamageDoneFireModPercent, value);
+            }
+        }
+
+        public float DamageDoneNatureMultiplier
+        {
+            get
+            {
+                return GetFieldFloat(CharacterFields.DamageDoneNatureModPercent);
+            }
+            set
+            {
+                SetField(CharacterFields.DamageDoneNatureModPercent, value);
+            }
+        }
+
+        public float DamageDoneFrostMultiplier
+        {
+            get
+            {
+                return GetFieldFloat(CharacterFields.DamageDoneFrostModPercent);
+            }
+            set
+            {
+                SetField(CharacterFields.DamageDoneFrostModPercent, value);
+            }
+        }
+
+        public float DamageDoneShadowMultiplier
+        {
+            get
+            {
+                return GetFieldFloat(CharacterFields.DamageDoneShadowModPercent);
+            }
+            set
+            {
+                SetField(CharacterFields.DamageDoneShadowModPercent, value);
+            }
+        }
+
+        public float DamageDoneArcaneMultiplier
+        {
+            get
+            {
+                return GetFieldFloat(CharacterFields.DamageDoneArcaneModPercent);
+            }
+            set
+            {
+                SetField(CharacterFields.DamageDoneArcaneModPercent, value);
+            }
+        }
+
+        public int WatchedFactionIndex
+        {
+            get
+            {
+                return GetFieldSigned(CharacterFields.WatchedFactionIndex);
+            }
+            set
+            {
+                SetField(CharacterFields.WatchedFactionIndex, value);
+            }
+        }
+
+        public int XPNextLevel
+        {
+            get
+            {
+                return GetFieldSigned(CharacterFields.XPNextLevel);
+            }
+            set
+            {
+                SetField(CharacterFields.XPNextLevel, value);
+            }
+        }
+
+        public float CritChanceMelee
+        {
+            get
+            {
+                return GetFieldFloat(CharacterFields.CritPercent);
+            }
+            set
+            {
+                SetField(CharacterFields.CritPercent, value);
+            }
+        }
+
+        public float CritChanceRanged
+        {
+            get
+            {
+                return GetFieldFloat(CharacterFields.CritPercentRanged);
+            }
+            set
+            {
+                SetField(CharacterFields.CritPercentRanged, value);
+            }
+        }
+
+        public float DodgeChance
+        {
+            get
+            {
+                return GetFieldFloat(CharacterFields.DodgePercent);
+            }
+            set
+            {
+                SetField(CharacterFields.DodgePercent, value);
             }
         }
         #endregion
