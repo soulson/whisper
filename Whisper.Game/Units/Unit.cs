@@ -540,6 +540,9 @@ namespace Whisper.Game.Units
             }
         }
 
+        /// <remarks>
+        /// For some reason, this is set to 0xee for players, but doesn't seem to be necessary.
+        /// </remarks>
         public Loyalty Loyalty
         {
             get
@@ -587,7 +590,7 @@ namespace Whisper.Game.Units
                 SetField((ushort)UnitFields.Bytes2, 0, (byte)value);
             }
         }
-
+        
         public UnitFlags2 UnitFlags2
         {
             get

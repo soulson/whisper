@@ -33,6 +33,10 @@ namespace Whisper.Game.Characters
             ActionButtons = actionButtons;
             Spells = spells;
             Name = name;
+
+            // TODO: instead of 0x18 as described here, this field has value 0x28 for players. need to determine the difference
+            UnitFlags2 |= UnitFlags2.Supportable;
+            UnitFlags2 |= UnitFlags2.CanHaveAuras;
         }
 
         public string Name
@@ -70,6 +74,7 @@ namespace Whisper.Game.Characters
             return Name;
         }
 
+        #region Fields Management
         public uint GetFieldUnsigned(CharacterFields field)
         {
             return GetFieldUnsigned((ushort)field);
@@ -99,6 +104,7 @@ namespace Whisper.Game.Characters
         {
             SetField((ushort)field, value);
         }
+        #endregion
 
         public class Spell
         {

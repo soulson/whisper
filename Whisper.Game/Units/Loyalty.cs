@@ -22,6 +22,7 @@ namespace Whisper.Game.Units
 {
     public enum Loyalty : byte
     {
+        None = 0,
         Rebellious = 1,
         Unruly = 2,
         Submissive = 3,
