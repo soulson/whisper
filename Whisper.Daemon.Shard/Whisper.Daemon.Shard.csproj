@@ -158,6 +158,7 @@
     <Content Include="SQL\World\character_template_action_button.sql" />
     <Content Include="SQL\World\character_template_item.sql" />
     <Content Include="SQL\World\character_template_spell.sql" />
+    <Content Include="SQL\World\model_bounding.sql" />
     <Content Include="SQL\World\race_definition.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -22,6 +22,7 @@ using Whisper.Game.Characters;
 using Whisper.Game.Units;
 using Whisper.Shared.Database;
 using log4net;
+using Whisper.Game.Objects;
 
 namespace Whisper.Game.World
 {
@@ -43,6 +44,7 @@ namespace Whisper.Game.World
         {
             LoadRaceDefinitions(wworld);
             LoadCharacterTemplates(wworld);
+            LoadModelBounds(wworld);
         }
 
         private void LoadCharacterTemplates(IWhisperDatasource datasource)
@@ -107,6 +109,24 @@ namespace Whisper.Game.World
             });
         }
 
+        private void LoadModelBounds(IWhisperDatasource datasource)
+        {
+            log.Info("loading model bounds...");
+            datasource.ExecuteQuery("select id, bounding_radius, combat_reach from model_bounding", reader =>
+            {
+                var defs = new Dictionary<int, ModelBounding>();
+
+                while (reader.Read())
+                {
+                    ModelBounding mb = new ModelBounding(reader.GetInt32(0), reader.GetFloat(1), reader.GetFloat(2));
+                    defs.Add(mb.ModelID, mb);
+                }
+
+                ModelBounds = defs;
+                log.DebugFormat("loaded {0} model bounding infos", defs.Count);
+            });
+        }
+
         /// <summary>
         /// Gets a mapping from Race and Class to a CharacterTemplate describing the starting state for characters of that race and class.
         /// </summary>
@@ -120,6 +140,15 @@ namespace Whisper.Game.World
         /// Gets a mapping from Race to a RaceDefinition describing properties of that race.
         /// </summary>
         public IDictionary<Race, RaceDefinition> RaceDefinitions
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets a mapping from model ID to a ModelBounding object describing the bounding properties of that model.
+        /// </summary>
+        public IDictionary<int, ModelBounding> ModelBounds
         {
             get;
             private set;

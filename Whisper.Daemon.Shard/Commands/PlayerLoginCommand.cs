@@ -79,6 +79,16 @@ namespace Whisper.Daemon.Shard.Commands
             player.DisplayID = player.NativeDisplayID = rd.GetDisplayID(player.Sex);
             player.FactionTemplate = rd.FactionID;
 
+            // get model definition for this character and assign related unit values
+            ModelBounding mb = ModelBounding.Default;
+            if (session.Server.World.ModelBounds.ContainsKey(player.DisplayID))
+                mb = session.Server.World.ModelBounds[player.DisplayID];
+            else
+                log.WarnFormat("model bounding info not found for player {0} with display id {1}", player.Name, player.DisplayID);
+
+            player.BoundingRadius = mb.BoundingRadius;
+            player.CombatReach = mb.CombatReach;
+
             // set proficiencies (hack)
             /*using (ByteBuffer packet = new ByteBuffer())
             {
