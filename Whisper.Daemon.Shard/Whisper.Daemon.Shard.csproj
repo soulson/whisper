@@ -154,11 +154,12 @@
     <Content Include="SQL\Shard\character.sql" />
     <Content Include="SQL\Shard\character_action_button.sql" />
     <Content Include="SQL\Shard\character_spell.sql" />
+    <Content Include="SQL\World\character_base_stats.sql" />
     <Content Include="SQL\World\character_template.sql" />
     <Content Include="SQL\World\character_template_action_button.sql" />
     <Content Include="SQL\World\character_template_item.sql" />
     <Content Include="SQL\World\character_template_spell.sql" />
-    <Content Include="SQL\World\model_bounding.sql" />
+    <Content Include="SQL\World\model_definition.sql" />
     <Content Include="SQL\World\race_definition.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

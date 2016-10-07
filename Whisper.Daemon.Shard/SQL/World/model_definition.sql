@@ -1,6 +1,6 @@
-﻿drop table if exists model_bounding;
+﻿drop table if exists model_definition;
 
-create table model_bounding (
+create table model_definition (
 	id int unsigned not null auto_increment,
 	bounding_radius float not null,
 	combat_reach float not null,
@@ -8,7 +8,7 @@ create table model_bounding (
 	primary key (id)
 );
 
-insert into model_bounding
+insert into model_definition
 (id, bounding_radius, combat_reach)
 values
 (4, 2, 3),

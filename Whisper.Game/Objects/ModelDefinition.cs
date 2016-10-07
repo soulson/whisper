@@ -20,11 +20,11 @@ using System;
 
 namespace Whisper.Game.Objects
 {
-    public class ModelBounding
+    public class ModelDefinition
     {
-        private static readonly ModelBounding defaultValue = new ModelBounding(0, 0.0f, 0.0f);
+        private static readonly ModelDefinition defaultValue = new ModelDefinition(0, 0.0f, 0.0f);
 
-        public static ModelBounding Default
+        public static ModelDefinition Default
         {
             get
             {
@@ -32,7 +32,7 @@ namespace Whisper.Game.Objects
             }
         }
 
-        public ModelBounding(int id, float boundingRadius, float combatReach)
+        public ModelDefinition(int id, float boundingRadius, float combatReach)
         {
             ModelID = id;
             BoundingRadius = boundingRadius;

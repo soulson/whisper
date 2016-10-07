@@ -44,7 +44,7 @@ namespace Whisper.Game.World
         {
             LoadRaceDefinitions(wworld);
             LoadCharacterTemplates(wworld);
-            LoadModelBounds(wworld);
+            LoadModelDefinitions(wworld);
         }
 
         private void LoadCharacterTemplates(IWhisperDatasource datasource)
@@ -109,21 +109,21 @@ namespace Whisper.Game.World
             });
         }
 
-        private void LoadModelBounds(IWhisperDatasource datasource)
+        private void LoadModelDefinitions(IWhisperDatasource datasource)
         {
-            log.Info("loading model bounds...");
-            datasource.ExecuteQuery("select id, bounding_radius, combat_reach from model_bounding", reader =>
+            log.Info("loading model definitions...");
+            datasource.ExecuteQuery("select id, bounding_radius, combat_reach from model_definition", reader =>
             {
-                var defs = new Dictionary<int, ModelBounding>();
+                var defs = new Dictionary<int, ModelDefinition>();
 
                 while (reader.Read())
                 {
-                    ModelBounding mb = new ModelBounding(reader.GetInt32(0), reader.GetFloat(1), reader.GetFloat(2));
-                    defs.Add(mb.ModelID, mb);
+                    ModelDefinition md = new ModelDefinition(reader.GetInt32(0), reader.GetFloat(1), reader.GetFloat(2));
+                    defs.Add(md.ModelID, md);
                 }
 
-                ModelBounds = defs;
-                log.DebugFormat("loaded {0} model bounding infos", defs.Count);
+                ModelDefinitions = defs;
+                log.DebugFormat("loaded {0} model definitions", defs.Count);
             });
         }
 
@@ -146,9 +146,9 @@ namespace Whisper.Game.World
         }
 
         /// <summary>
-        /// Gets a mapping from model ID to a ModelBounding object describing the bounding properties of that model.
+        /// Gets a mapping from model ID to a ModelDefinition object describing the properties of that model.
         /// </summary>
-        public IDictionary<int, ModelBounding> ModelBounds
+        public IDictionary<int, ModelDefinition> ModelDefinitions
         {
             get;
             private set;
