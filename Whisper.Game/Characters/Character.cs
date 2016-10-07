@@ -54,17 +54,6 @@ namespace Whisper.Game.Characters
             WatchedFactionIndex = -1;
 
             // TODO: remove magic values
-            SetField(UnitFields.Health, 51);
-            SetField(UnitFields.Mana, 165);
-            SetField(UnitFields.MaxHealth, 51);
-            SetField(UnitFields.MaxMana, 165);
-            SetField(UnitFields.Strength, 20);
-            SetField(UnitFields.Agility, 20);
-            SetField(UnitFields.Stamina, 20);
-            SetField(UnitFields.Intellect, 23);
-            SetField(UnitFields.Spirit, 23);
-            SetField(UnitFields.BaseMana, 100);
-            SetField(UnitFields.BaseHealth, 31);
             SetField(CharacterFields.XPNextLevel, 400);
         }
 

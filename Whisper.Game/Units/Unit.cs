@@ -55,6 +55,10 @@ namespace Whisper.Game.Units
         protected virtual void OnClassChanged()
         {
         }
+
+        protected virtual void OnStatsChanged()
+        {
+        }
         #endregion
 
         #region Unit Fields
@@ -91,6 +95,7 @@ namespace Whisper.Game.Units
             set
             {
                 SetField(UnitFields.BaseHealth, value);
+                OnStatsChanged();
             }
         }
 
@@ -127,6 +132,7 @@ namespace Whisper.Game.Units
             set
             {
                 SetField(UnitFields.BaseMana, value);
+                OnStatsChanged();
             }
         }
 
@@ -259,6 +265,7 @@ namespace Whisper.Game.Units
             set
             {
                 SetField(UnitFields.Strength, value);
+                OnStatsChanged();
             }
         }
 
@@ -271,6 +278,7 @@ namespace Whisper.Game.Units
             set
             {
                 SetField(UnitFields.Agility, value);
+                OnStatsChanged();
             }
         }
 
@@ -283,6 +291,7 @@ namespace Whisper.Game.Units
             set
             {
                 SetField(UnitFields.Stamina, value);
+                OnStatsChanged();
             }
         }
 
@@ -295,6 +304,7 @@ namespace Whisper.Game.Units
             set
             {
                 SetField(UnitFields.Intellect, value);
+                OnStatsChanged();
             }
         }
 
@@ -307,6 +317,7 @@ namespace Whisper.Game.Units
             set
             {
                 SetField(UnitFields.Spirit, value);
+                OnStatsChanged();
             }
         }
 

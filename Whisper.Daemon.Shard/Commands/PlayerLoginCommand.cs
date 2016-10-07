@@ -89,6 +89,17 @@ namespace Whisper.Daemon.Shard.Commands
             player.BoundingRadius = md.BoundingRadius;
             player.CombatReach = md.CombatReach;
 
+            // get player base stats and assign. probably not the best spot for this
+            // TODO: get healthmax and manamax out of here
+            CharacterBaseStats cbs = session.Server.World.CharacterBaseStats[player.Race][player.Class][(byte)player.Level];
+            player.HealthMax = player.Health = player.HealthBase = cbs.Health;
+            player.ManaMax = player.Mana = player.ManaBase = cbs.Mana;
+            player.Strength = cbs.Strength;
+            player.Agility = cbs.Agility;
+            player.Stamina = cbs.Stamina;
+            player.Intellect = cbs.Intellect;
+            player.Spirit = cbs.Spirit;
+
             // set proficiencies (hack)
             /*using (ByteBuffer packet = new ByteBuffer())
             {
