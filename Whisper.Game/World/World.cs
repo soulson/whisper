@@ -44,6 +44,7 @@ namespace Whisper.Game.World
         {
             LoadRaceDefinitions(wworld);
             LoadCharacterTemplates(wworld);
+            LoadCharacterBaseStats(wworld);
             LoadModelDefinitions(wworld);
         }
 
@@ -127,6 +128,32 @@ namespace Whisper.Game.World
             });
         }
 
+        private void LoadCharacterBaseStats(IWhisperDatasource datasource)
+        {
+            log.Info("loading character base stats...");
+            datasource.ExecuteQuery("select race, class, level, health, mana, strength, agility, stamina, intellect, spirit from character_base_stats", reader =>
+            {
+                var defs = new Dictionary<Race, IDictionary<Class, IDictionary<byte, CharacterBaseStats>>>();
+
+                int count = 0;
+                while (reader.Read())
+                {
+                    CharacterBaseStats cbs = new CharacterBaseStats((Race)reader.GetByte(0), (Class)reader.GetByte(1), reader.GetByte(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9));
+
+                    if (!defs.ContainsKey(cbs.Race))
+                        defs.Add(cbs.Race, new Dictionary<Class, IDictionary<byte, CharacterBaseStats>>());
+                    if (!defs[cbs.Race].ContainsKey(cbs.Class))
+                        defs[cbs.Race].Add(cbs.Class, new Dictionary<byte, CharacterBaseStats>());
+
+                    defs[cbs.Race][cbs.Class].Add(cbs.Level, cbs);
+                    ++count;
+                }
+
+                CharacterBaseStats = defs;
+                log.DebugFormat("loaded {0} character base stats", count);
+            });
+        }
+
         /// <summary>
         /// Gets a mapping from Race and Class to a CharacterTemplate describing the starting state for characters of that race and class.
         /// </summary>
@@ -149,6 +176,15 @@ namespace Whisper.Game.World
         /// Gets a mapping from model ID to a ModelDefinition object describing the properties of that model.
         /// </summary>
         public IDictionary<int, ModelDefinition> ModelDefinitions
+        {
+            get;
+            private set;
+        }
+        
+        /// <summary>
+        /// Gets a mapping from Race, Class, and level to the set of base stats for a character.
+        /// </summary>
+        public IDictionary<Race, IDictionary<Class, IDictionary<byte, CharacterBaseStats>>> CharacterBaseStats
         {
             get;
             private set;
