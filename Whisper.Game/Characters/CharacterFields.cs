@@ -41,7 +41,7 @@ namespace Whisper.Game.Characters
         VisibleItemFirstCreator = 0x46 + UnitFields.END, // Size:2, count = 19
         VisibleItemFirst0 = 0x48 + UnitFields.END, // Size:8
         VisibleItemFirstProperties = 0x50 + UnitFields.END, // Size:1
-        VisibleItemFistPadding = 0x51 + UnitFields.END, // Size:1
+        VisibleItemFirstPadding = 0x51 + UnitFields.END, // Size:1
         VisibleItemLastCreator = 0x11e + UnitFields.END,
         VisibleItemLast0 = 0x120 + UnitFields.END,
         VisibleItemLastProperties = 0x128 + UnitFields.END,
