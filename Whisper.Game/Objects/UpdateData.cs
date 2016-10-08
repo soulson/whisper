@@ -35,6 +35,14 @@ namespace Whisper.Game.Objects
             buffer = new ByteBuffer();
         }
 
+        public bool IsEmpty
+        {
+            get
+            {
+                return blockCount == 0 && outOfRangeIDs.Count == 0;
+            }
+        }
+
         public void AddOutOfRangeIDs(params ObjectID[] ids)
         {
             throw new NotImplementedException();

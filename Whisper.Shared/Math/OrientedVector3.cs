@@ -34,5 +34,10 @@ namespace Whisper.Shared.Math
             Z = z;
             Orientation = orientation;
         }
+
+        public float Distance(OrientedVector3 other)
+        {
+            return (float)System.Math.Sqrt((X - other.X) * (X - other.X) + (Y - other.Y) * (Y - other.Y) + (Z - other.Z) * (Z - other.Z));
+        }
     }
 }

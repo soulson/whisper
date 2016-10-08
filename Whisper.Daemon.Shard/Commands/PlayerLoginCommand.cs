@@ -188,18 +188,6 @@ namespace Whisper.Daemon.Shard.Commands
                     log.WarnFormat("cannot send first login cinematic for undefined race '{0}'", player.Race);
             }
 
-            // send object state
-            using (ByteBuffer packet = new ByteBuffer())
-            {
-                using (UpdateData updateData = new UpdateData())
-                {
-                    player.BuildTargetedCreationUpdate(updateData, player);
-                    updateData.Append(packet);
-
-                    session.Send(ShardServerOpcode.ObjectUpdate, packet);
-                }
-            }
-
             // send friend list and ignore list (empty for now)
             session.Send(ShardServerOpcode.FriendList, (byte)0);
             session.Send(ShardServerOpcode.IgnoreList, (byte)0);

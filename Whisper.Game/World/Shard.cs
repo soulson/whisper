@@ -65,6 +65,19 @@ namespace Whisper.Game.World
         }
 
         /// <summary>
+        /// Clears the UpdateMask on all GameObjects in the Shard.
+        /// </summary>
+        public void ClearUpdateMasks()
+        {
+            foreach (GameObject go in GameObjects)
+                go.ClearUpdateMask();
+            foreach (GameObject go in Units)
+                go.ClearUpdateMask();
+            foreach (GameObject go in Characters)
+                go.ClearUpdateMask();
+        }
+
+        /// <summary>
         /// Gets the World that this Shard is an instance of.
         /// </summary>
         public World World
@@ -98,6 +111,16 @@ namespace Whisper.Game.World
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Gets an enumeration of all GameObject instances existing in the given map.
+        /// </summary>
+        /// <param name="mapId">map id for which to list GameObjects</param>
+        /// <returns>enumeration of GameObjects or an empty enumeration if none found</returns>
+        public IEnumerable<GameObject> GetObjects(int mapId)
+        {
+            return GameObjects.Where((go) => go.MapID == mapId).Union(Units.Where((u) => u.MapID == mapId)).Union(Characters.Where((c) => c.MapID == mapId)).AsEnumerable();
         }
 
         /// <summary>
@@ -153,14 +176,14 @@ namespace Whisper.Game.World
         {
             if(character == null)
             {
-                log.Warn("Shard.RemoveCharacter called with null argument");
+                log.WarnFormat("{0} called with null argument", nameof(RemoveCharacter));
                 return;
             }
 
             if (Characters.Remove(character))
                 log.DebugFormat("character {0} removed from shard", character);
             else
-                log.WarnFormat("Shard.RemoveCharacter cannot find character {0} to remove it", character);
+                log.WarnFormat("{1} cannot find character {0} to remove it", character, nameof(RemoveCharacter));
         }
     }
 }

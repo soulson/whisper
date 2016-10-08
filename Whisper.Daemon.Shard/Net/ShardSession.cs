@@ -17,15 +17,18 @@
  */
 
 using log4net;
+using SuperSocket.SocketBase;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using Whisper.Daemon.Shard.Database;
 using Whisper.Daemon.Shard.Lookup;
 using Whisper.Daemon.Shard.Security;
 using Whisper.Game.Characters;
+using Whisper.Game.Objects;
+using Whisper.Game.World;
 using Whisper.Shared.Net;
 using Whisper.Shared.Utility;
-using SuperSocket.SocketBase;
-using Whisper.Daemon.Shard.Database;
 
 namespace Whisper.Daemon.Shard.Net
 {
@@ -42,6 +45,7 @@ namespace Whisper.Daemon.Shard.Net
         {
             Cipher = new PacketCipher();
             AccountID = -1;
+            Awareness = new HashSet<GameObject>();
         }
 
         /// <summary>
@@ -92,6 +96,15 @@ namespace Whisper.Daemon.Shard.Net
         }
 
         /// <summary>
+        /// Gets a Set of GameObjects that this session is aware of.
+        /// </summary>
+        protected ISet<GameObject> Awareness
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Initializes the cipher that encrypts and decrypts packet headers.
         /// </summary>
         /// <param name="sessionKey">A BigInteger object representing the session key agreed by client and server during authentication.</param>
@@ -99,12 +112,103 @@ namespace Whisper.Daemon.Shard.Net
         {
             Cipher.Initialize(sessionKey);
         }
+        
+        /// <summary>
+        /// Updates the state of the ShardSession to represent that the given amount of game time has passed.
+        /// </summary>
+        /// <param name="diff">amount of game time passed since the last call to Update</param>
+        public void Update(TimeSpan diff)
+        {
+            // just aliases for brevity
+            World world = Server.World;
+            Game.World.Shard shard = Server.Shard;
+
+            // update aware objects
+            using (UpdateData ud = new UpdateData())
+            {
+                // go through objects in map
+                foreach (GameObject go in shard.GetObjects(Player.MapID))
+                {
+                    if (Awareness.Contains(go))
+                    {
+                        // update, remove, or do nothing
+                        if(go.Position.Distance(Player.Position) < world.ViewDistance)
+                        {
+                            // update or do nothing
+                            if(go.IsUpdated)
+                            {
+                                // update
+                                go.BuildTargetedUpdate(ud, Player);
+                            }
+                        }
+                        else
+                        {
+                            // remove
+                            RemoveAwareObject(go, ud);
+                            go.BuildTargetedRemovalUpdate(ud, Player);
+                        }
+                    }
+                    else
+                    {
+                        // add or do nothing
+                        if (go.Position.Distance(Player.Position) < world.ViewDistance)
+                        {
+                            // add
+                            go.BuildTargetedCreationUpdate(ud, Player);
+                            AddAwareObject(go, ud);
+                        }
+                    }
+                }
+
+                // next, go through objects in awareness set, in case any don't have the correct map ID, and remove them
+                ISet<GameObject> removalSet = new HashSet<GameObject>();
+                foreach(GameObject go in Awareness)
+                {
+                    if (go.MapID != Player.MapID)
+                        removalSet.Add(go);
+                }
+
+                foreach(GameObject go in removalSet)
+                {
+                    // remove
+                    RemoveAwareObject(go, ud);
+                    go.BuildTargetedRemovalUpdate(ud, Player);
+                }
+
+                if(!ud.IsEmpty)
+                {
+                    using (ByteBuffer packet = new ByteBuffer())
+                    {
+                        ud.Append(packet);
+                        Send(ShardServerOpcode.ObjectUpdate, packet);
+                    }
+                }
+            }
+        }
+
+        private void AddAwareObject(GameObject gameObject, UpdateData updateData)
+        {
+            Awareness.Add(gameObject);
+            gameObject.BuildTargetedCreationUpdate(updateData, Player);
+        }
+
+        private void RemoveAwareObject(GameObject gameObject, UpdateData updateData)
+        {
+            if (Awareness.Contains(gameObject))
+            {
+                // TODO: send object remove update
+                Awareness.Remove(gameObject);
+            }
+            else
+                log.WarnFormat("{0} called on session for player {1} with unknown object ID {2}", nameof(RemoveAwareObject), Player.Name, gameObject.ID);
+        }
 
         /// <summary>
         /// Sends a QueryTime packet to the client with the current result of time(null) as its payload.
         /// </summary>
         public void SendQueryTimePacket()
         {
+            // this is vulnerable to the year 2038 bug. remind me to fix that if i'm still working on this app in 22 years
             uint time = (uint)((DateTime.Now - Epoch).Ticks / 1000);
             Send(ShardServerOpcode.QueryTime, BitConverter.GetBytes(time));
         }
@@ -214,8 +318,9 @@ namespace Whisper.Daemon.Shard.Net
                     new CharacterDao().UpdateCharacter(Server.ShardDB, playerToRemove);
                 });
 
-                // update Status immediately (it is thread-safe)
+                // update Status immediately (it is thread-safe) (these other values aren't though... potential bug?)
                 Status = SessionStatus.None;
+                Awareness.Clear();
                 Player = null;
             }
 

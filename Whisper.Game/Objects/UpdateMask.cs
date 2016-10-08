@@ -62,6 +62,26 @@ namespace Whisper.Game.Objects
             }
         }
 
+        public bool IsEmpty
+        {
+            get
+            {
+                foreach(byte b in blocks)
+                {
+                    if (b != 0)
+                        return false;
+                }
+
+                return true;
+            }
+        }
+
+        public void Clear()
+        {
+            for (int i = 0; i < blocks.Length; ++i)
+                blocks[i] = 0;
+        }
+
         public void SetBit(int index)
         {
             blocks[index >> 3] |= (byte)(1 << (index & 0x7));

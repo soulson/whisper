@@ -52,9 +52,22 @@ namespace Whisper.Daemon.Shard.Threads
                     // sleep first since initial update is done outside the loop
                     Thread.Sleep(config.ShardUpdateMilliseconds);
 
+                    // calculate diff
                     DateTime updateTime = DateTime.Now;
+                    TimeSpan diff = updateTime - lastUpdate;
+
+                    // process all thread-unsafe queued commands
                     server.ProcessQueuedCommands();
-                    server.Shard.Update(updateTime - lastUpdate);
+
+                    // update the game world
+                    server.Shard.Update(diff);
+
+                    // update each session whose status is Ingame
+                    foreach (ShardSession session in server.GetSessions((ss) => ss.Status == SessionStatus.Ingame))
+                        session.Update(diff);
+
+                    // clear update masks, so any new GameObject updates will be sent during the next set of session updates and we don't repeat any from this tick
+                    server.Shard.ClearUpdateMasks();
                     lastUpdate = updateTime;
                 }
             }
@@ -64,6 +77,8 @@ namespace Whisper.Daemon.Shard.Threads
             }
 
             log.Info("stopping shard updater");
+
+            // TODO: save shard state @ shutdown
         }
     }
 }

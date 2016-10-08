@@ -189,5 +189,16 @@ namespace Whisper.Game.World
             get;
             private set;
         }
+
+        /// <summary>
+        /// Gets the default world view distance.
+        /// </summary>
+        public float ViewDistance
+        {
+            get
+            {
+                return 70.0f;
+            }
+        }
     }
 }
