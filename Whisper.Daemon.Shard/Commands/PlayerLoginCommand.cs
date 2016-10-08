@@ -100,22 +100,6 @@ namespace Whisper.Daemon.Shard.Commands
             player.Intellect = cbs.Intellect;
             player.Spirit = cbs.Spirit;
 
-            // set proficiencies (hack)
-            /*using (ByteBuffer packet = new ByteBuffer())
-            {
-                packet.Append((byte)2);
-                packet.Append(0x00084400);
-
-                session.Send(ShardServerOpcode.SetProficiency, packet);
-            }
-            using (ByteBuffer packet = new ByteBuffer())
-            {
-                packet.Append((byte)4);
-                packet.Append(0x00000003);
-
-                session.Send(ShardServerOpcode.SetProficiency, packet);
-            }*/
-
             // send logon player response packet
             using (ByteBuffer packet = new ByteBuffer())
             {
