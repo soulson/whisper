@@ -22,50 +22,112 @@ namespace Whisper.Game.Units
 {
     public class MovementSpeed
     {
+        private float walking;
+        private float running;
+        private float runningBack;
+        private float swimming;
+        private float swimmingBack;
+        private float turning;
+
         public MovementSpeed()
         {
-            Walking = 2.5f;
-            Running = 7.0f;
-            RunningBack = 4.5f;
-            Swimming = 4.722222f;
-            SwimmingBack = 2.5f;
-            Turning = 3.141594f;
+            walking = 2.5f;
+            running = 7.0f;
+            runningBack = 4.5f;
+            swimming = 4.722222f;
+            swimmingBack = 2.5f;
+            turning = 3.141594f;
+
+            IsChanged = false;
         }
 
         public float Walking
         {
-            get;
-            set;
+            get
+            {
+                return walking;
+            }
+            set
+            {
+                IsChanged |= walking != value;
+                walking = value;
+            }
         }
 
         public float Running
         {
-            get;
-            set;
+            get
+            {
+                return running;
+            }
+            set
+            {
+                IsChanged |= running != value;
+                running = value;
+            }
         }
 
         public float RunningBack
         {
-            get;
-            set;
+            get
+            {
+                return runningBack;
+            }
+            set
+            {
+                IsChanged |= runningBack != value;
+                runningBack = value;
+            }
         }
 
         public float Swimming
         {
-            get;
-            set;
+            get
+            {
+                return swimming;
+            }
+            set
+            {
+                IsChanged |= swimming != value;
+                swimming = value;
+            }
         }
 
         public float SwimmingBack
         {
-            get;
-            set;
+            get
+            {
+                return swimmingBack;
+            }
+            set
+            {
+                IsChanged |= swimmingBack != value;
+                swimmingBack = value;
+            }
         }
 
         public float Turning
         {
+            get
+            {
+                return turning;
+            }
+            set
+            {
+                IsChanged |= turning != value;
+                turning = value;
+            }
+        }
+
+        public bool IsChanged
+        {
             get;
-            set;
+            private set;
+        }
+
+        public void ClearChangeState()
+        {
+            IsChanged = false;
         }
     }
 }

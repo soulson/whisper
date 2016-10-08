@@ -287,7 +287,7 @@ namespace Whisper.Game.Objects
             }
         }
 
-        protected virtual void AppendBasicUpdate(ByteBuffer buffer, ObjectUpdateType updateType, ObjectUpdateFlags updateFlags)
+        protected virtual void AppendCreationUpdate(ByteBuffer buffer, ObjectUpdateType updateType, ObjectUpdateFlags updateFlags)
         {
             buffer.Append((byte)updateType);
             buffer.Append(ID.GetPacked());
@@ -297,7 +297,14 @@ namespace Whisper.Game.Objects
 
         protected virtual void AppendMovementUpdate(ByteBuffer buffer, ObjectUpdateType updateType, ObjectUpdateFlags updateFlags)
         {
+            if ((updateFlags & ObjectUpdateFlags.HasPosition) != 0)
+                buffer.Append(Position);
 
+            if ((updateFlags & ObjectUpdateFlags.MaskID) != 0)
+                buffer.Append(ID.MaskID);
+
+            if ((updateFlags & ObjectUpdateFlags.All) != 0)
+                buffer.Append(1); // ?
         }
 
         protected virtual void AppendValuesUpdate(ByteBuffer buffer, ObjectUpdateType updateType, ObjectUpdateFlags updateFlags, UpdateMask updateMask)
@@ -315,29 +322,26 @@ namespace Whisper.Game.Objects
 
         public void BuildTargetedCreationUpdate(UpdateData data, Character character)
         {
-            // TODO: review how to pick which CreateObject to use
-            ObjectUpdateType updateType = ObjectUpdateType.CreateObject2;
+            ObjectUpdateType updateType = ObjectUpdateType.CreateObject;
             ObjectUpdateFlags updateFlags = UpdateFlags;
+            
+            if (ID.ObjectType == ObjectID.Type.Corpse
+             || ID.ObjectType == ObjectID.Type.DynamicObject
+             || ID.ObjectType == ObjectID.Type.GameObject
+             || ID.ObjectType == ObjectID.Type.Player
+             || ID.ObjectType == ObjectID.Type.Unit)
+                updateType = ObjectUpdateType.CreateObject2;
 
             if (character == this)
                 updateFlags |= ObjectUpdateFlags.Self;
 
             using (ByteBuffer buffer = new ByteBuffer())
             {
-                // basic update
-                AppendBasicUpdate(buffer, updateType, updateFlags);
+                // creation update
+                AppendCreationUpdate(buffer, updateType, updateFlags);
 
                 // movement update
-                if((updateFlags & ObjectUpdateFlags.Living) != 0)
-                    AppendMovementUpdate(buffer, updateType, updateFlags);
-                else if((updateFlags & ObjectUpdateFlags.HasPosition) != 0)
-                    buffer.Append(Position);
-
-                if ((updateFlags & ObjectUpdateFlags.MaskID) != 0)
-                    buffer.Append(ID.MaskID);
-
-                if ((updateFlags & ObjectUpdateFlags.All) != 0)
-                    buffer.Append(1); // ?
+                AppendMovementUpdate(buffer, updateType, updateFlags);
 
                 // values update
                 UpdateMask updateMask = GetCreationUpdateMask();
@@ -350,12 +354,35 @@ namespace Whisper.Game.Objects
 
         public void BuildTargetedUpdate(UpdateData data, Character character)
         {
+            ObjectUpdateFlags updateFlags = UpdateFlags;
 
-        }
+            if (character == this)
+                updateFlags |= ObjectUpdateFlags.Self;
 
-        public void BuildTargetedRemovalUpdate(UpdateData data, Character character)
-        {
+            if ((ChangeState & ObjectChangeState.Movement) != 0)
+            {
+                using (ByteBuffer buffer = new ByteBuffer())
+                {
+                    buffer.Append((byte)ObjectUpdateType.Movement);
+                    buffer.Append(ID);
 
+                    AppendMovementUpdate(buffer, ObjectUpdateType.Movement, updateFlags);
+
+                    data.AddUpdateBlock(buffer);
+                }
+            }
+            if ((ChangeState & ObjectChangeState.Values) != 0)
+            {
+                using (ByteBuffer buffer = new ByteBuffer())
+                {
+                    buffer.Append((byte)ObjectUpdateType.Values);
+                    buffer.Append(ID.GetPacked()); // why is movement a full id and values is packed? no clue
+
+                    AppendValuesUpdate(buffer, ObjectUpdateType.Values, updateFlags, updateMask);
+
+                    data.AddUpdateBlock(buffer);
+                }
+            }
         }
 
         protected UpdateMask GetCreationUpdateMask()
@@ -374,15 +401,20 @@ namespace Whisper.Game.Objects
             return updateMask;
         }
 
-        public bool IsUpdated
+        public virtual ObjectChangeState ChangeState
         {
             get
             {
-                return !updateMask.IsEmpty;
+                ObjectChangeState state = ObjectChangeState.None;
+
+                if (!updateMask.IsEmpty)
+                    state |= ObjectChangeState.Values;
+
+                return state;
             }
         }
 
-        public void ClearUpdateMask()
+        public virtual void ClearChangeState()
         {
             updateMask.Clear();
         }

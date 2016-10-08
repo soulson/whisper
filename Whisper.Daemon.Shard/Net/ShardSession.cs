@@ -135,7 +135,7 @@ namespace Whisper.Daemon.Shard.Net
                         if(go.Position.Distance(Player.Position) < world.ViewDistance)
                         {
                             // update or do nothing
-                            if(go.IsUpdated)
+                            if(go.ChangeState != ObjectChangeState.None)
                             {
                                 // update
                                 go.BuildTargetedUpdate(ud, Player);
@@ -145,7 +145,6 @@ namespace Whisper.Daemon.Shard.Net
                         {
                             // remove
                             RemoveAwareObject(go, ud);
-                            go.BuildTargetedRemovalUpdate(ud, Player);
                         }
                     }
                     else
@@ -172,7 +171,6 @@ namespace Whisper.Daemon.Shard.Net
                 {
                     // remove
                     RemoveAwareObject(go, ud);
-                    go.BuildTargetedRemovalUpdate(ud, Player);
                 }
 
                 if(!ud.IsEmpty)

@@ -70,11 +70,11 @@ namespace Whisper.Game.World
         public void ClearUpdateMasks()
         {
             foreach (GameObject go in GameObjects)
-                go.ClearUpdateMask();
+                go.ClearChangeState();
             foreach (GameObject go in Units)
-                go.ClearUpdateMask();
+                go.ClearChangeState();
             foreach (GameObject go in Characters)
-                go.ClearUpdateMask();
+                go.ClearChangeState();
         }
 
         /// <summary>

@@ -24,13 +24,17 @@ namespace Whisper.Game.Units
 {
     public class Unit : GameObject
     {
+        private bool movementFlagsUpdated;
+        private MovementFlags movementFlags;
+
         public Unit(ObjectID id, ObjectTypeID typeId) : this(id, typeId, (ushort)UnitFields.END)
         {
         }
 
         protected Unit(ObjectID id, ObjectTypeID typeId, ushort fieldsCount) : base(id, typeId, fieldsCount)
         {
-            MovementFlags = MovementFlags.None;
+            movementFlags = MovementFlags.None;
+            movementFlagsUpdated = false;
             MovementSpeed = new MovementSpeed();
 
             // initialize default values
@@ -643,8 +647,15 @@ namespace Whisper.Game.Units
         #region Unit Properties
         public MovementFlags MovementFlags
         {
-            get;
-            protected set;
+            get
+            {
+                return movementFlags;
+            }
+            set
+            {
+                movementFlagsUpdated |= value != movementFlags;
+                movementFlags = value;
+            }
         }
 
         public MovementSpeed MovementSpeed
@@ -695,21 +706,47 @@ namespace Whisper.Game.Units
             }
         }
 
+        public override ObjectChangeState ChangeState
+        {
+            get
+            {
+                if (movementFlagsUpdated || MovementSpeed.IsChanged)
+                    return base.ChangeState | ObjectChangeState.Movement;
+                else
+                    return base.ChangeState;
+            }
+        }
+
+        public override void ClearChangeState()
+        {
+            base.ClearChangeState();
+
+            MovementSpeed.ClearChangeState();
+            movementFlagsUpdated = false;
+        }
+
         protected override void AppendMovementUpdate(ByteBuffer buffer, ObjectUpdateType updateType, ObjectUpdateFlags updateFlags)
         {
-            base.AppendMovementUpdate(buffer, updateType, updateFlags);
 
-            buffer.Append((int)MovementFlags);
-            buffer.Append(0); // time
-            buffer.Append(Position);
-            buffer.Append(0); // fallingTime
+            if ((updateFlags & ObjectUpdateFlags.Living) != 0)
+            {
+                buffer.Append((int)MovementFlags);
+                buffer.Append(0); // time
+                buffer.Append(Position);
+                buffer.Append(0); // fallingTime
 
-            buffer.Append(MovementSpeed.Walking);
-            buffer.Append(MovementSpeed.Running);
-            buffer.Append(MovementSpeed.RunningBack);
-            buffer.Append(MovementSpeed.Swimming);
-            buffer.Append(MovementSpeed.SwimmingBack);
-            buffer.Append(MovementSpeed.Turning);
+                buffer.Append(MovementSpeed.Walking);
+                buffer.Append(MovementSpeed.Running);
+                buffer.Append(MovementSpeed.RunningBack);
+                buffer.Append(MovementSpeed.Swimming);
+                buffer.Append(MovementSpeed.SwimmingBack);
+                buffer.Append(MovementSpeed.Turning);
+
+                // remove HasPosition from the updateFlags when passing to GameObject, since Living already wrote the position
+                base.AppendMovementUpdate(buffer, updateType, updateFlags & ~ObjectUpdateFlags.HasPosition);
+            }
+            else
+                base.AppendMovementUpdate(buffer, updateType, updateFlags);
         }
         #endregion
     }
