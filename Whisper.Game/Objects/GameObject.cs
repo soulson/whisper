@@ -33,6 +33,9 @@ namespace Whisper.Game.Objects
         private UpdateMask updateMask;
         private ObjectTypeID typeId;
 
+        private bool positionUpdated;
+        private OrientedVector3 position;
+
         public GameObject(ObjectID id, ObjectTypeID typeId) : this(id, typeId, (ushort)ObjectFields.END)
         {
         }
@@ -126,8 +129,15 @@ namespace Whisper.Game.Objects
 
         public OrientedVector3 Position
         {
-            get;
-            set;
+            get
+            {
+                return position;
+            }
+            set
+            {
+                positionUpdated = true;
+                position = value;
+            }
         }
         #endregion
 
@@ -410,6 +420,9 @@ namespace Whisper.Game.Objects
                 if (!updateMask.IsEmpty)
                     state |= ObjectChangeState.Values;
 
+                if (positionUpdated)
+                    state |= ObjectChangeState.Movement;
+
                 return state;
             }
         }
@@ -417,6 +430,7 @@ namespace Whisper.Game.Objects
         public virtual void ClearChangeState()
         {
             updateMask.Clear();
+            positionUpdated = false;
         }
         #endregion
     }

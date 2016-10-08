@@ -19,6 +19,7 @@
 using log4net;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Whisper.Daemon.Shard.Config;
 using Whisper.Daemon.Shard.Net;
 
@@ -59,12 +60,14 @@ namespace Whisper.Daemon.Shard.Threads
                     // process all thread-unsafe queued commands
                     server.ProcessQueuedCommands();
 
-                    // update the game world
+                    // update the game world. currently single-threaded. need to do some research on splitting this up to at least one thread per map
                     server.Shard.Update(diff);
 
-                    // update each session whose status is Ingame
-                    foreach (ShardSession session in server.GetSessions((ss) => ss.Status == SessionStatus.Ingame))
-                        session.Update(diff);
+                    // update each session whose status is Ingame. this is parallelized, since session updates do not update data they don't own
+                    Parallel.ForEach(server.GetSessions((ss) => ss.Status == SessionStatus.Ingame), (pSession, pState) =>
+                    {
+                        pSession.Update(diff);
+                    });
 
                     // clear update masks, so any new GameObject updates will be sent during the next set of session updates and we don't repeat any from this tick
                     server.Shard.ClearUpdateMasks();
