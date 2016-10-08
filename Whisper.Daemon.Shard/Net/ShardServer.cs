@@ -120,8 +120,13 @@ namespace Whisper.Daemon.Shard.Net
                 }
                 else
                 {
-                    // place all others into the command queue. this could use some review to see if read-only commands can be executed more swiftly than this
-                    EnqueueCommand(() => base.ExecuteCommand(session, requestInfo));
+                    // split remaining commands by thread safety. thread-safe commands are executed on a thread owned by the session that received them; thread-unsafe commands are executed on the server update thread
+                    CommandClosure closure = () => base.ExecuteCommand(session, requestInfo);
+
+                    if (safety == CommandThreadSafety.ThreadSafe)
+                        session.EnqueueCommand(closure);
+                    else
+                        EnqueueCommand(closure);
                 }
             }
             // no need to log the 'else' case here. unknown packet notifications are handled by the Composer

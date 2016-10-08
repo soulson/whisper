@@ -19,6 +19,7 @@
 using log4net;
 using SuperSocket.SocketBase;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Numerics;
 using Whisper.Daemon.Shard.Database;
@@ -37,12 +38,15 @@ namespace Whisper.Daemon.Shard.Net
         private readonly ILog log = LogManager.GetLogger(typeof(ShardSession));
         private readonly ILog packetLog = LogManager.GetLogger("PacketLog");
         private readonly DateTime Epoch = new DateTime(1970, 1, 1);
+
+        private readonly ConcurrentQueue<CommandClosure> commandQueue;
         
         /// <summary>
         /// Creates a new instance of the ShardSession class.
         /// </summary>
         public ShardSession() : base(SessionStatus.Connected)
         {
+            commandQueue = new ConcurrentQueue<CommandClosure>();
             Cipher = new PacketCipher();
             AccountID = -1;
             Awareness = new HashSet<GameObject>();
@@ -199,6 +203,43 @@ namespace Whisper.Daemon.Shard.Net
             }
             else
                 log.WarnFormat("{0} called on session for player {1} with unknown object ID {2}", nameof(RemoveAwareObject), Player.Name, gameObject.ID);
+        }
+        
+        /// <summary>
+        /// Executes all queued commands synchronously on the currently executing Thread.
+        /// </summary>
+        public void ProcessQueuedCommands()
+        {
+            CommandClosure command;
+            while (commandQueue.TryDequeue(out command))
+            {
+                try
+                {
+                    ExecuteQueuedCommand(command);
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("{0} uncaught during ProcessQueuedCommands{1}{2}", ex.GetType().Name, Environment.NewLine, ex.StackTrace);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes a command from the command queue.
+        /// </summary>
+        /// <param name="command">closure for the command to execute</param>
+        protected virtual void ExecuteQueuedCommand(CommandClosure command)
+        {
+            command();
+        }
+
+        /// <summary>
+        /// Enqueues a command to be executed on the next update tick.
+        /// </summary>
+        /// <param name="command">command to execute</param>
+        public void EnqueueCommand(CommandClosure command)
+        {
+            commandQueue.Enqueue(command);
         }
 
         /// <summary>

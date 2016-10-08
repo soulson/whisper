@@ -66,6 +66,7 @@ namespace Whisper.Daemon.Shard.Threads
                     // update each session whose status is Ingame. this is parallelized, since session updates do not update data they don't own
                     Parallel.ForEach(server.GetSessions((ss) => ss.Status == SessionStatus.Ingame), (pSession, pState) =>
                     {
+                        pSession.ProcessQueuedCommands();
                         pSession.Update(diff);
                     });
 

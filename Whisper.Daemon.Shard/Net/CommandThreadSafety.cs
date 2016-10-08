@@ -21,17 +21,20 @@ namespace Whisper.Daemon.Shard.Net
     public enum CommandThreadSafety
     {
         /// <summary>
-        /// Declares that a Command does not read or write any non-static data that it does not own.
+        /// Declares that a Command does not read or write any dynamic data.
+        /// Immediate commands are executed in parallel immediately by whichever thread received them.
         /// </summary>
         Immediate,
 
         /// <summary>
-        /// Declares that a Command reads, but does not write, non-static data that it does not own.
+        /// Declares that a Command writes dynamic data owned by its session or reads dynamic data that its session does not own.
+        /// ThreadSafe commands are executed in serial on a thread owned by the session that received the command.
         /// </summary>
         ThreadSafe,
 
         /// <summary>
-        /// Declares that a Command writes to non-static data that it does not own.
+        /// Declares that a Command writes to non-static data that its session does not own.
+        /// NotThreadSafe commands are executed in serial on a thread owned by the shard.
         /// </summary>
         NotThreadSafe,
     }
