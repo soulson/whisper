@@ -18,17 +18,17 @@
 
 using System;
 using Whisper.Game.Characters;
-using Whisper.Game.Units;
 using Whisper.Shared.Math;
 using Whisper.Shared.Utility;
 using log4net;
+using System.IO;
 
 namespace Whisper.Game.Objects
 {
     public class GameObject
     {
         private readonly ILog log = LogManager.GetLogger(typeof(GameObject));
-
+        
         private uint[] fields;
         private ObjectTypeID typeId;
 
@@ -46,6 +46,14 @@ namespace Whisper.Game.Objects
 
             ID = id;
             TypeID = typeId;
+        }
+
+        /// <summary>
+        /// Used to set the initial values for a newly created instance of GameObject.
+        /// </summary>
+        /// <param name="world">World instance that provides static data about the game world</param>
+        public virtual void Initialize(World.World world)
+        {
             Scale = 1.0f;
         }
 
@@ -128,6 +136,29 @@ namespace Whisper.Game.Objects
             {
                 return fields.Length;
             }
+        }
+
+        public byte[] GetRawFields()
+        {
+            byte[] buffer = new byte[sizeof(uint) * FieldCount];
+
+            using (MemoryStream ms = new MemoryStream(buffer, true))
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                for (int i = 0; i < FieldCount; ++i)
+                    bw.Write(fields[i]);
+            }
+
+            return buffer;
+        }
+
+        public void SetRawFields(byte[] buffer)
+        {
+            if (buffer.Length != sizeof(uint) * FieldCount)
+                throw new ArgumentException($"buffer size must equal size of internal fields buffer ({sizeof(uint) * FieldCount})", nameof(buffer));
+
+            for (int i = 0; i < FieldCount; ++i)
+                fields[i] = BitConverter.ToUInt32(buffer, sizeof(uint) * i);
         }
 
         protected uint GetFieldUnsigned(ushort index)

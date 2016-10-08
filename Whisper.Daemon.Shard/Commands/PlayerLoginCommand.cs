@@ -74,36 +74,17 @@ namespace Whisper.Daemon.Shard.Commands
             Character player = new CharacterDao().GetCharacterByID(session.Server.ShardDB, header.CharacterID);
             log.DebugFormat("character '{0}' loaded successfully", player.Name);
 
-            // get race definition for this character and assign related unit values
-            RaceDefinition rd = session.Server.World.RaceDefinitions[player.Race];
-            player.DisplayID = player.NativeDisplayID = rd.GetDisplayID(player.Sex);
-            player.FactionTemplate = rd.FactionID;
-
-            // get model definition for this character and assign related unit values
-            ModelDefinition md = ModelDefinition.Default;
-            if (session.Server.World.ModelDefinitions.ContainsKey(player.DisplayID))
-                md = session.Server.World.ModelDefinitions[player.DisplayID];
-            else
-                log.WarnFormat("model bounding info not found for player {0} with display id {1}", player.Name, player.DisplayID);
-
-            player.BoundingRadius = md.BoundingRadius * player.Scale;
-            player.CombatReach = md.CombatReach * player.Scale;
-
-            // get player base stats and assign. probably not the best spot for this
-            // TODO: get healthmax and manamax out of here
-            CharacterBaseStats cbs = session.Server.World.CharacterBaseStats[player.Race][player.Class][(byte)player.Level];
-            player.HealthMax = player.Health = player.HealthBase = cbs.Health;
-            player.ManaMax = player.Mana = player.ManaBase = cbs.Mana;
-            player.Strength = cbs.Strength;
-            player.Agility = cbs.Agility;
-            player.Stamina = cbs.Stamina;
-            player.Intellect = cbs.Intellect;
-            player.Spirit = cbs.Spirit;
+            // initialize the character if it has never logged in before now
+            if (player.FirstLogin)
+            {
+                log.DebugFormat("character '{0}' first login, initializing", player.Name);
+                player.Initialize(session.Server.World);
+            }
 
             // set session status to ingame and add the player to the Shard
             session.Player = player;
-            session.Server.Shard.AddCharacter(player);
             session.Status = SessionStatus.Ingame;
+            session.Server.Shard.AddCharacter(player);
 
             // send logon player response packet
             using (ByteBuffer packet = new ByteBuffer())
@@ -164,7 +145,7 @@ namespace Whisper.Daemon.Shard.Commands
             // set initial action buttons
             using (ByteBuffer packet = new ByteBuffer())
             {
-                for(int i = 0; i < Character.MaxActionButtons; ++i)
+                for (int i = 0; i < Character.MaxActionButtons; ++i)
                 {
                     if (i < player.ActionButtons.Count)
                         packet.Append(player.ActionButtons[i]);
@@ -198,8 +179,15 @@ namespace Whisper.Daemon.Shard.Commands
                 session.Send(ShardServerOpcode.LoginSetTimeAndSpeed, packet);
             }
 
-            // trigger cinematic
-            session.Send(ShardServerOpcode.TriggerCinematic, BitConverter.GetBytes(rd.FirstLoginCinematicID));
+            // trigger cinematic if this is the character's first login
+            if (player.FirstLogin)
+            {
+                RaceDefinition rd;
+                if (session.Server.World.RaceDefinitions.TryGetValue(player.Race, out rd))
+                    session.Send(ShardServerOpcode.TriggerCinematic, BitConverter.GetBytes(rd.FirstLoginCinematicID));
+                else
+                    log.WarnFormat("cannot send first login cinematic for undefined race '{0}'", player.Race);
+            }
 
             // send object state
             using (ByteBuffer packet = new ByteBuffer())

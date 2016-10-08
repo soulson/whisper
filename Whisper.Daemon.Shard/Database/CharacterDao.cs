@@ -24,6 +24,7 @@ using Whisper.Game.Units;
 using Whisper.Shared.Database;
 using Whisper.Shared.Math;
 using log4net;
+using System.IO;
 
 namespace Whisper.Daemon.Shard.Database
 {
@@ -50,33 +51,55 @@ namespace Whisper.Daemon.Shard.Database
                     spells.Add(new Character.Spell() { SpellID = result.GetInt32(0), Enabled = result.GetBoolean(1) });
             });
 
-            //                                 0     1     2      3    4     5     6           7           8            9      10  11     12          13          14          15           16      17       18
-            return wshard.ExecuteQuery("select name, race, class, sex, skin, face, hair_style, hair_color, facial_hair, level, xp, money, position_x, position_y, position_z, orientation, map_id, zone_id, player_flags from `character` where id = ?", characterId.ID, result =>
+            //                                 0     1     2      3    4     5     6           7           8            9      10          11          12          13           14      15       16            17
+            return wshard.ExecuteQuery("select name, race, class, sex, skin, face, hair_style, hair_color, facial_hair, level, position_x, position_y, position_z, orientation, map_id, zone_id, player_flags, fields from `character` where id = ?", characterId.ID, result =>
             {
                 if (result.Read())
                 {
                     Character character = new Character(characterId, result.GetString(0), actionButtons, spells);
-                    character.Position = new OrientedVector3(result.GetFloat(12), result.GetFloat(13), result.GetFloat(14), result.GetFloat(15));
-                    character.MapID = result.GetInt32(16);
-                    character.ZoneID = result.GetInt32(17);
+
+                    // set fields first. following updates could clobber information in that array
+                    if (result.IsDBNull(17))
+                    {
+                        // new characters don't have field arrays yet
+                        character.FirstLogin = true;
+                    }
+                    else
+                    {
+                        int size = character.FieldCount * sizeof(uint);
+                        byte[] buffer = new byte[size];
+                        long fieldsResult = result.GetBytes(17, 0, buffer, 0, size);
+
+                        if (fieldsResult == size)
+                            character.SetRawFields(buffer);
+                        else
+                        {
+                            // did not read the correct amount of bytes. corruption?
+                            throw new InvalidDataException($"character.fields had incorrect number of bytes. expected {size}, but got {fieldsResult}");
+                        }
+                    }
+
+                    character.Position = new OrientedVector3(result.GetFloat(10), result.GetFloat(11), result.GetFloat(12), result.GetFloat(13));
+                    character.MapID = result.GetInt32(14);
+                    character.ZoneID = result.GetInt32(15);
 
                     Race raceEnum;
                     if (Enum.TryParse(result.GetByte(1).ToString(), out raceEnum))
                         character.Race = raceEnum;
                     else
-                        throw new ArgumentException(string.Format("cannot load character with invalid race {0}", result.GetByte(1)));
+                        throw new ArgumentException($"cannot load character with invalid race {result.GetByte(1)}");
 
                     Class classEnum;
                     if (Enum.TryParse(result.GetByte(2).ToString(), out classEnum))
                         character.Class = classEnum;
                     else
-                        throw new ArgumentException(string.Format("cannot load character with invalid class {0}", result.GetByte(2)));
+                        throw new ArgumentException($"cannot load character with invalid class {result.GetByte(2)}");
 
                     Sex sexEnum;
                     if (Enum.TryParse(result.GetByte(3).ToString(), out sexEnum))
                         character.Sex = sexEnum;
                     else
-                        throw new ArgumentException(string.Format("cannot load character with invalid sex {0}", result.GetByte(3)));
+                        throw new ArgumentException($"cannot load character with invalid sex {result.GetByte(3)}");
 
                     character.Skin = result.GetByte(4);
                     character.Face = result.GetByte(5);
@@ -88,7 +111,7 @@ namespace Whisper.Daemon.Shard.Database
                     return character;
                 }
                 else
-                    throw new ArgumentException("GetCharacterByID called on ObjectID that does not exist", "characterId");
+                    throw new ArgumentException("GetCharacterByID called on ObjectID that does not exist", nameof(characterId));
             });
         }
     }

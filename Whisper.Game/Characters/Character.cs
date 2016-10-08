@@ -16,10 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using log4net;
 using System;
 using System.Collections.Generic;
 using Whisper.Game.Objects;
 using Whisper.Game.Units;
+using Whisper.Game.World;
 using Whisper.Shared.Math;
 
 namespace Whisper.Game.Characters
@@ -28,30 +30,14 @@ namespace Whisper.Game.Characters
     {
         public const int MaxActionButtons = 120;
 
+        private readonly ILog log = LogManager.GetLogger(typeof(Character));
+
         public Character(ObjectID id, string name, IList<ActionButton> actionButtons, IList<Spell> spells) : base(id, ObjectTypeID.Player, (ushort)CharacterFields.END)
         {
             ActionButtons = actionButtons;
             Spells = spells;
             Name = name;
-
-            // initialize default values
-            DamageDoneArcaneMultiplier = 1.0f;
-            DamageDoneFrostMultiplier = 1.0f;
-            DamageDoneFireMultiplier = 1.0f;
-            DamageDoneNatureMultiplier = 1.0f;
-            DamageDoneShadowMultiplier = 1.0f;
-            DamageDoneHolyMultiplier = 1.0f;
-            DamageDonePhysicalMultiplier = 1.0f;
-
-            UnitFlags |= UnitFlags.PvPUnit;
-
-            // TODO: instead of 0x18 as described here, this field has value 0x28 for players. need to determine the difference
-            UnitFlags2 |= UnitFlags2.Supportable;
-            UnitFlags2 |= UnitFlags2.CanHaveAuras;
-
-            // TODO: these need to be updated as implemented
-            RestState = RestState.Normal;
-            WatchedFactionIndex = -1;
+            FirstLogin = false;
         }
 
         public string Name
@@ -82,6 +68,61 @@ namespace Whisper.Game.Characters
         {
             get;
             private set;
+        }
+
+        public bool FirstLogin
+        {
+            get;
+            set;
+        }
+
+        public override void Initialize(World.World world)
+        {
+            base.Initialize(world);
+
+            // initialize default values
+            DamageDoneArcaneMultiplier = 1.0f;
+            DamageDoneFrostMultiplier = 1.0f;
+            DamageDoneFireMultiplier = 1.0f;
+            DamageDoneNatureMultiplier = 1.0f;
+            DamageDoneShadowMultiplier = 1.0f;
+            DamageDoneHolyMultiplier = 1.0f;
+            DamageDonePhysicalMultiplier = 1.0f;
+
+            UnitFlags |= UnitFlags.PvPUnit;
+
+            // TODO: instead of 0x18 as described here, this field has value 0x28 for players. need to determine the difference
+            UnitFlags2 |= UnitFlags2.Supportable;
+            UnitFlags2 |= UnitFlags2.CanHaveAuras;
+            
+            RestState = RestState.Normal;
+            WatchedFactionIndex = -1;
+
+            // get race definition for this character and assign related unit values
+            RaceDefinition rd = world.RaceDefinitions[Race];
+            DisplayID = NativeDisplayID = rd.GetDisplayID(Sex);
+            FactionTemplate = rd.FactionID;
+
+            // get model definition for this character and assign related unit values
+            ModelDefinition md = ModelDefinition.Default;
+            if (world.ModelDefinitions.ContainsKey(DisplayID))
+                md = world.ModelDefinitions[DisplayID];
+            else
+                log.WarnFormat("model bounding info not found for player {0} with display id {1}", Name, DisplayID);
+
+            BoundingRadius = md.BoundingRadius * Scale;
+            CombatReach = md.CombatReach * Scale;
+
+            // get player base stats and assign. probably not the best spot for this
+            // TODO: get healthmax and manamax out of here
+            CharacterBaseStats cbs = world.CharacterBaseStats[Race][Class][(byte)Level];
+            HealthMax = Health = HealthBase = cbs.Health;
+            ManaMax = Mana = ManaBase = cbs.Mana;
+            Strength = cbs.Strength;
+            Agility = cbs.Agility;
+            Stamina = cbs.Stamina;
+            Intellect = cbs.Intellect;
+            Spirit = cbs.Spirit;
         }
 
         public override string ToString()

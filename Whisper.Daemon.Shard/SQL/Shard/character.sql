@@ -13,18 +13,18 @@ create table `character` (
 	hair_color tinyint unsigned not null,
 	facial_hair tinyint unsigned not null,
 	level tinyint unsigned not null default 1,
-	xp int unsigned not null default 0,
-	money int unsigned not null default 0,
 	position_x float not null,
 	position_y float not null,
 	position_z float not null,
 	orientation float not null,
 	map_id int unsigned not null,
     zone_id int unsigned not null,
-	`online` bool not null default false,
 	player_flags int unsigned not null default 0,
+	fields blob(5128) comment 'a dump of the fields array that Character inherits from GameObject',
 
 	primary key (id),
 	unique key idx_name (name),
-	key idx_account (account_id)
+	key idx_account (account_id),
+    
+    foreign key (race) references wworld.race_definition (id)
 );
