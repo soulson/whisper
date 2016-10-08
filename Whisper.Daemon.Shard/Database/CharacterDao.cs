@@ -37,6 +37,8 @@ namespace Whisper.Daemon.Shard.Database
             if (characterId.ObjectType != ObjectID.Type.Player)
                 throw new ArgumentException("GetCharacterByID called on ObjectID that is not a Player", "characterId");
 
+            log.InfoFormat("loading character {0}", characterId);
+
             IList<ActionButton> actionButtons = new List<ActionButton>();
             wshard.ExecuteQuery("select action, type from character_action_button where character_id = ? order by button asc", characterId.ID, result =>
             {
@@ -51,6 +53,7 @@ namespace Whisper.Daemon.Shard.Database
                     spells.Add(new Character.Spell() { SpellID = result.GetInt32(0), Enabled = result.GetBoolean(1) });
             });
 
+            // TODO: player_fields
             //                                 0     1     2      3    4     5     6           7           8            9      10          11          12          13           14      15       16            17
             return wshard.ExecuteQuery("select name, race, class, sex, skin, face, hair_style, hair_color, facial_hair, level, position_x, position_y, position_z, orientation, map_id, zone_id, player_flags, fields from `character` where id = ?", characterId.ID, result =>
             {
@@ -106,13 +109,25 @@ namespace Whisper.Daemon.Shard.Database
                     character.HairStyle = result.GetByte(6);
                     character.HairColor = result.GetByte(7);
                     character.FaceExtra = result.GetByte(8);
-                    character.Level = result.GetInt32(9);
+                    character.Level = result.GetByte(9);
 
                     return character;
                 }
                 else
                     throw new ArgumentException("GetCharacterByID called on ObjectID that does not exist", nameof(characterId));
             });
+        }
+
+        public void UpdateCharacter(IWhisperDatasource wshard, Character character)
+        {
+            log.InfoFormat("saving character '{0}'", character.Name);
+
+            // TODO: action buttons, spells, player_fields
+            int result = wshard.ExecuteNonQuery("update `character` set level = ?, position_x = ?, position_y = ?, position_z = ?, orientation = ?, map_id = ?, zone_id = ?, fields = ? where id = ?",
+                character.Level, character.Position.X, character.Position.Y, character.Position.Z, character.Position.Orientation, character.MapID, character.ZoneID, character.GetRawFields(), character.ID.ID);
+
+            if (result != 1)
+                log.ErrorFormat("expected 1 character row updated from UpdateCharacter but got {0}", result);
         }
     }
 }

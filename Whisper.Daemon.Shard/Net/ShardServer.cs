@@ -121,7 +121,7 @@ namespace Whisper.Daemon.Shard.Net
                 else
                 {
                     // place all others into the command queue. this could use some review to see if read-only commands can be executed more swiftly than this
-                    commandQueue.Enqueue(() => base.ExecuteCommand(session, requestInfo));
+                    EnqueueCommand(() => base.ExecuteCommand(session, requestInfo));
                 }
             }
             // no need to log the 'else' case here. unknown packet notifications are handled by the Composer
@@ -153,6 +153,15 @@ namespace Whisper.Daemon.Shard.Net
         protected virtual void ExecuteQueuedCommand(CommandClosure command)
         {
             command();
+        }
+
+        /// <summary>
+        /// Enqueues a command to be executed on the next update tick.
+        /// </summary>
+        /// <param name="command">command to execute</param>
+        public void EnqueueCommand(CommandClosure command)
+        {
+            commandQueue.Enqueue(command);
         }
     }
 }

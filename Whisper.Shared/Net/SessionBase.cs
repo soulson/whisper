@@ -28,12 +28,19 @@ namespace Whisper.Shared.Net
         private TStatus status;
         private object statusLock;
 
+        /// <summary>
+        /// Creates a new instance of a Session with the given initial status.
+        /// </summary>
+        /// <param name="initialStatus">status in which the session starts</param>
         public SessionBase(TStatus initialStatus)
         {
             statusLock = new object();
             status = initialStatus;
         }
 
+        /// <summary>
+        /// Gets or sets the status of this session. This property is thread-safe.
+        /// </summary>
         public TStatus Status
         {
             get

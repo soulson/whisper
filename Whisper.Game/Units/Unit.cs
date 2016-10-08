@@ -244,15 +244,15 @@ namespace Whisper.Game.Units
             }
         }
 
-        public int Level
+        public byte Level
         {
             get
             {
-                return GetFieldSigned(UnitFields.Level);
+                return (byte)GetFieldSigned(UnitFields.Level);
             }
             set
             {
-                SetField(UnitFields.Level, value);
+                SetField(UnitFields.Level, (int)value);
             }
         }
 

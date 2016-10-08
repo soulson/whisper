@@ -70,7 +70,6 @@ namespace Whisper.Daemon.Shard.Commands
 
         public override void ExecuteCommand(ShardSession session, ShardRequest request, PlayerLogin header)
         {
-            log.DebugFormat("player logging in. loading character id = {0}", header.CharacterID);
             Character player = new CharacterDao().GetCharacterByID(session.Server.ShardDB, header.CharacterID);
             log.DebugFormat("character '{0}' loaded successfully", player.Name);
 

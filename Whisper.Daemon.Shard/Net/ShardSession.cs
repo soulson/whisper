@@ -25,6 +25,7 @@ using Whisper.Game.Characters;
 using Whisper.Shared.Net;
 using Whisper.Shared.Utility;
 using SuperSocket.SocketBase;
+using Whisper.Daemon.Shard.Database;
 
 namespace Whisper.Daemon.Shard.Net
 {
@@ -204,7 +205,16 @@ namespace Whisper.Daemon.Shard.Net
             {
                 log.DebugFormat("session closing and status is {0}, so removing player {1} from shard", SessionStatus.Ingame, Player);
 
-                Server.Shard.RemoveCharacter(Player);
+                // enqueue the player removal since it changes shard state. capture the player in the closure before nulling it
+                Character playerToRemove = Player;
+                Server.EnqueueCommand(() =>
+                {
+                    // remove, then save
+                    Server.Shard.RemoveCharacter(playerToRemove);
+                    new CharacterDao().UpdateCharacter(Server.ShardDB, playerToRemove);
+                });
+
+                // update Status immediately (it is thread-safe)
                 Status = SessionStatus.None;
                 Player = null;
             }
