@@ -86,8 +86,8 @@ namespace Whisper.Daemon.Shard.Commands
             else
                 log.WarnFormat("model bounding info not found for player {0} with display id {1}", player.Name, player.DisplayID);
 
-            player.BoundingRadius = md.BoundingRadius;
-            player.CombatReach = md.CombatReach;
+            player.BoundingRadius = md.BoundingRadius * player.Scale;
+            player.CombatReach = md.CombatReach * player.Scale;
 
             // get player base stats and assign. probably not the best spot for this
             // TODO: get healthmax and manamax out of here

@@ -52,9 +52,6 @@ namespace Whisper.Game.Characters
             // TODO: these need to be updated as implemented
             RestState = RestState.Normal;
             WatchedFactionIndex = -1;
-
-            // TODO: remove magic values
-            SetField(CharacterFields.XPNextLevel, 400);
         }
 
         public string Name
