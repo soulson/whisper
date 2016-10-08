@@ -48,7 +48,7 @@ namespace Whisper.Daemon.Shard.Commands
         {
             get
             {
-                return CommandThreadSafety.ThreadSafe;
+                return CommandThreadSafety.Immediate;
             }
         }
 

@@ -25,15 +25,27 @@ namespace Whisper.Shared.Net
         where TSession : SessionBase<TSession, TRequest, TStatus>, new()
         where TRequest : class, IWhisperRequest
     {
+        private TStatus status;
+        private object statusLock;
+
         public SessionBase(TStatus initialStatus)
         {
-            Status = initialStatus;
+            statusLock = new object();
+            status = initialStatus;
         }
 
         public TStatus Status
         {
-            get;
-            set;
+            get
+            {
+                lock (statusLock)
+                    return status;
+            }
+            set
+            {
+                lock (statusLock)
+                    status = value;
+            }
         }
     }
 }

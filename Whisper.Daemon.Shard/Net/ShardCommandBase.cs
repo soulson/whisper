@@ -22,7 +22,7 @@ using Whisper.Shared.Utility;
 
 namespace Whisper.Daemon.Shard.Net
 {
-    public abstract class ShardCommandBase<THeader> : CommandBase<THeader, ShardSession, ShardRequest, SessionStatus>
+    public abstract class ShardCommandBase<THeader> : CommandBase<THeader, ShardSession, ShardRequest, SessionStatus>, IThreadAwareCommand
         where THeader : struct
     {
         public abstract CommandThreadSafety ThreadSafety

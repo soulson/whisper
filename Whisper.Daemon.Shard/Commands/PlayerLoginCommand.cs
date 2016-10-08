@@ -100,6 +100,11 @@ namespace Whisper.Daemon.Shard.Commands
             player.Intellect = cbs.Intellect;
             player.Spirit = cbs.Spirit;
 
+            // set session status to ingame and add the player to the Shard
+            session.Player = player;
+            session.Server.Shard.AddCharacter(player);
+            session.Status = SessionStatus.Ingame;
+
             // send logon player response packet
             using (ByteBuffer packet = new ByteBuffer())
             {
@@ -211,11 +216,6 @@ namespace Whisper.Daemon.Shard.Commands
             // send friend list and ignore list (empty for now)
             session.Send(ShardServerOpcode.FriendList, (byte)0);
             session.Send(ShardServerOpcode.IgnoreList, (byte)0);
-
-            // set session status to ingame and add the player to the Shard
-            session.Player = player;
-            session.Server.Shard.AddCharacter(player);
-            session.Status = SessionStatus.Ingame;
 
             // initialize world state
             using (ByteBuffer packet = new ByteBuffer())

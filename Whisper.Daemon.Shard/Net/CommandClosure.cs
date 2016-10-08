@@ -16,23 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+
 namespace Whisper.Daemon.Shard.Net
 {
-    public enum CommandThreadSafety
-    {
-        /// <summary>
-        /// Declares that a Command does not read or write any non-static data that it does not own.
-        /// </summary>
-        Immediate,
-
-        /// <summary>
-        /// Declares that a Command reads, but does not write, non-static data that it does not own.
-        /// </summary>
-        ThreadSafe,
-
-        /// <summary>
-        /// Declares that a Command writes to non-static data that it does not own.
-        /// </summary>
-        NotThreadSafe,
-    }
+    /// <summary>
+    /// Captures the execution state of a Command for execution on another Thread.
+    /// </summary>
+    public delegate void CommandClosure();
 }

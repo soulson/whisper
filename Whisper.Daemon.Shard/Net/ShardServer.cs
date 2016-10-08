@@ -18,6 +18,7 @@
 
 using log4net;
 using System;
+using System.Collections.Concurrent;
 using Whisper.Daemon.Shard.Config;
 using Whisper.Game.World;
 using Whisper.Shared.Database;
@@ -29,6 +30,7 @@ namespace Whisper.Daemon.Shard.Net
     public class ShardServer : ServerBase<ShardSession, ShardRequest, SessionStatus>
     {
         private readonly ILog log = LogManager.GetLogger(typeof(ShardServer));
+        private readonly ConcurrentQueue<CommandClosure> commandQueue = new ConcurrentQueue<CommandClosure>();
 
         public ShardServer(IWhisperComposerFactory<ShardRequest> composerFactory, IRandomSource randomSource, IWhisperDatasource wauth, IWhisperDatasource wshard, World world, Game.World.Shard shard, ShardConfig configuration) : base(composerFactory)
         {
@@ -40,40 +42,117 @@ namespace Whisper.Daemon.Shard.Net
             Shard = shard;
         }
 
+        /// <summary>
+        /// Gets a datasource for the authentication database.
+        /// </summary>
         public IWhisperDatasource AuthDB
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets a datasource for the shard database.
+        /// </summary>
         public IWhisperDatasource ShardDB
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets a reference to the configuration for this server.
+        /// </summary>
         public ShardConfig AppConfig
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets a cryptographically secure random number generator.
+        /// </summary>
         public IRandomSource SecureRandom
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets a reference to the World associated with this server.
+        /// </summary>
         public World World
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets a reference to the Shard associated with this server.
+        /// </summary>
         public Game.World.Shard Shard
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Executes Immediate commands and enqueues unsafe commands.
+        /// </summary>
+        /// <param name="session">session that sent the command</param>
+        /// <param name="requestInfo">request that tells us which command to execute</param>
+        /// <seealso cref="Whisper.Daemon.Shard.Net.ShardServer.ExecuteQueuedCommand"/>
+        protected override void ExecuteCommand(ShardSession session, ShardRequest requestInfo)
+        {
+            IWhisperCommand<ShardSession, ShardRequest> command;
+            if (RegisteredCommands.TryGetValue(requestInfo.Key, out command))
+            {
+                // best to assume the worst, right?
+                CommandThreadSafety safety = CommandThreadSafety.NotThreadSafe;
+
+                if (command is IThreadAwareCommand)
+                    safety = (command as IThreadAwareCommand).ThreadSafety;
+
+                if(safety == CommandThreadSafety.Immediate)
+                {
+                    // execute Immediate commands immediately
+                    base.ExecuteCommand(session, requestInfo);
+                }
+                else
+                {
+                    // place all others into the command queue. this could use some review to see if read-only commands can be executed more swiftly than this
+                    commandQueue.Enqueue(() => base.ExecuteCommand(session, requestInfo));
+                }
+            }
+            // no need to log the 'else' case here. unknown packet notifications are handled by the Composer
+        }
+
+        /// <summary>
+        /// Executes all queued commands synchronously on the currently executing Thread.
+        /// </summary>
+        public void ProcessQueuedCommands()
+        {
+            CommandClosure command;
+            while (commandQueue.TryDequeue(out command))
+            {
+                try
+                {
+                    ExecuteQueuedCommand(command);
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("{0} uncaught during ProcessQueuedCommands{1}{2}", ex.GetType().Name, Environment.NewLine, ex.StackTrace);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes a command from the command queue.
+        /// </summary>
+        /// <param name="command">closure for the command to execute</param>
+        protected virtual void ExecuteQueuedCommand(CommandClosure command)
+        {
+            command();
         }
     }
 }

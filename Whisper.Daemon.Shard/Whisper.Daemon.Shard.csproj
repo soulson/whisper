@@ -118,7 +118,9 @@
     <Compile Include="Lookup\ClientPacketHeader.cs" />
     <Compile Include="Lookup\ShardClientOpcode.cs" />
     <Compile Include="Lookup\ShardServerOpcode.cs" />
+    <Compile Include="Net\CommandClosure.cs" />
     <Compile Include="Net\CommandThreadSafety.cs" />
+    <Compile Include="Net\IThreadAwareCommand.cs" />
     <Compile Include="Net\SessionStatus.cs" />
     <Compile Include="Net\ShardCommandBase.cs" />
     <Compile Include="Net\ShardComposer.cs" />
@@ -130,6 +132,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\PacketCipher.cs" />
+    <Compile Include="Threads\ShardPinger.cs" />
+    <Compile Include="Threads\ShardUpdater.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

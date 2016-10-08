@@ -20,6 +20,7 @@ using log4net;
 using System;
 using System.Threading;
 using Whisper.Daemon.Shard.Net;
+using Whisper.Daemon.Shard.Threads;
 using Whisper.Shared.CLI;
 
 namespace Whisper.Daemon.Shard.CLI
@@ -28,49 +29,28 @@ namespace Whisper.Daemon.Shard.CLI
     {
         private readonly ILog log = LogManager.GetLogger(typeof(ShardConsole));
 
-        private volatile bool running;
-
         public ShardConsole(ShardServer server) : base(server)
         {
-            
         }
 
         public override void Run()
         {
-            Thread shardPinger = new Thread(() => PingShardsTable());
+            Thread shardPinger = new Thread(new ShardPinger(Server.AuthDB, Server.AppConfig).Run);
             shardPinger.Name = "shard pinger";
 
-            running = true;
+            Thread shardUpdater = new Thread(new ShardUpdater(Server, Server.AppConfig).Run);
+            shardUpdater.Name = "shard updater";
+
+            shardUpdater.Start();
             shardPinger.Start();
 
             base.Run();
-            running = false;
 
             shardPinger.Interrupt();
+            shardUpdater.Interrupt();
+
             shardPinger.Join();
-        }
-
-        private void PingShardsTable()
-        {
-            log.Info("starting shard pinger thread");
-
-            try
-            {
-                while (running)
-                {
-                    int result = Server.AuthDB.ExecuteNonQuery("update shard set last_ping = ? where id = ?", DateTime.Now, Server.AppConfig.ShardID);
-                    if (result != 1)
-                        log.ErrorFormat("expected to update 1 row with ping but updated {0}. this is likely due to a mismatch between ShardID in shardd.config and wauth.shard.id", result);
-
-                    Thread.Sleep(Server.AppConfig.ShardPingMilliseconds);
-                }
-            }
-            catch (ThreadInterruptedException)
-            {
-                // nothing to do here. this is normal behavior for stopping this thread when it's asleep
-            }
-
-            log.Info("stopping shard pinger thread");
+            shardUpdater.Join();
         }
     }
 }

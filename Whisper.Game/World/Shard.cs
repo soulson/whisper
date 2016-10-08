@@ -38,25 +38,62 @@ namespace Whisper.Game.World
         /// <summary>
         /// Initializes a new instance of the Shard class.
         /// </summary>
-        public Shard()
+        /// <param name="world">the World that this Shard is to be an instance of</param>
+        public Shard(World world)
         {
+            World = world;
             GameObjects = new List<GameObject>();
             Units = new List<Unit>();
             Characters = new List<Character>();
         }
 
+        /// <summary>
+        /// Initializes the state of the Shard. Must be called before any Update calls.
+        /// </summary>
+        public void Initialize()
+        {
+
+        }
+
+        /// <summary>
+        /// Updates the state of the Shard to represent that the given amount of game time has passed.
+        /// </summary>
+        /// <param name="diff">amount of game time passed since the last call to Update</param>
+        public void Update(TimeSpan diff)
+        {
+
+        }
+
+        /// <summary>
+        /// Gets the World that this Shard is an instance of.
+        /// </summary>
+        public World World
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets a List of all GameObjects currently in the Shard.
+        /// </summary>
         protected IList<GameObject> GameObjects
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets a List of all Units currently in the Shard.
+        /// </summary>
         protected IList<Unit> Units
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets a List of all Characters currently in the Shard.
+        /// </summary>
         protected IList<Character> Characters
         {
             get;

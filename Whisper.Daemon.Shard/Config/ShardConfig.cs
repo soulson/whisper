@@ -30,6 +30,7 @@ namespace Whisper.Daemon.Shard.Config
             ShardDaemonBindPort = 8085;
             ShardID = 1;
             ShardPingMilliseconds = 5000;
+            ShardUpdateMilliseconds = 40;
         }
 
         public string ShardDaemonBindAddress
@@ -51,6 +52,12 @@ namespace Whisper.Daemon.Shard.Config
         }
 
         public int ShardPingMilliseconds
+        {
+            get;
+            set;
+        }
+
+        public int ShardUpdateMilliseconds
         {
             get;
             set;
