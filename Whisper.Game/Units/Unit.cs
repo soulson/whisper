@@ -668,6 +668,12 @@ namespace Whisper.Game.Units
             private set;
         }
 
+        public float OldOrientation
+        {
+            get;
+            private set;
+        }
+
         public MovementSpeed MovementSpeed
         {
             get;
@@ -736,6 +742,7 @@ namespace Whisper.Game.Units
         public override void ClearChangeState()
         {
             OldMovementFlags = MovementFlags;
+            OldOrientation = Position.Orientation;
 
             base.ClearChangeState();
 

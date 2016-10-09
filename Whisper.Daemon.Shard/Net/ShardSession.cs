@@ -191,7 +191,8 @@ namespace Whisper.Daemon.Shard.Net
             }
 
             // protip: don't send movement updates to yourself
-            if (gameObject is Unit && gameObject != Player)
+            // TODO: should this be is Unit or is Character?
+            if (gameObject is Character && gameObject != Player)
             {
                 Unit unit = gameObject as Unit;
                 ISet<ShardServerOpcode> opcodes = new HashSet<ShardServerOpcode>();
@@ -217,7 +218,7 @@ namespace Whisper.Daemon.Shard.Net
                         opcodes.Add(ShardServerOpcode.MoveStartBackward);
                     else if ((unit.MovementFlags & (MovementFlags.MoveForward | MovementFlags.MoveBackward)) == 0 && (unit.OldMovementFlags & (MovementFlags.MoveForward | MovementFlags.MoveBackward)) != 0)
                         opcodes.Add(ShardServerOpcode.MoveStop);
-
+                    
                     if ((unit.MovementFlags & MovementFlags.TurnLeft) != 0 && (unit.OldMovementFlags & MovementFlags.TurnLeft) == 0)
                         opcodes.Add(ShardServerOpcode.MoveTurnStartLeft);
                     else if ((unit.MovementFlags & MovementFlags.TurnRight) != 0 && (unit.OldMovementFlags & MovementFlags.TurnRight) == 0)
@@ -225,6 +226,9 @@ namespace Whisper.Daemon.Shard.Net
                     else if ((unit.MovementFlags & (MovementFlags.TurnLeft | MovementFlags.TurnRight)) == 0 && (unit.OldMovementFlags & (MovementFlags.TurnLeft | MovementFlags.TurnRight)) != 0)
                         opcodes.Add(ShardServerOpcode.MoveTurnStop);
                 }
+
+                if (unit.Position.Orientation != unit.OldOrientation && (unit.MovementFlags & (MovementFlags.TurnLeft | MovementFlags.TurnRight)) == 0)
+                    opcodes.Add(ShardServerOpcode.MoveSetOrientation);
 
                 if (opcodes.Count > 0)
                 {
