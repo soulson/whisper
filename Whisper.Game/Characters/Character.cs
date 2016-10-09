@@ -32,6 +32,13 @@ namespace Whisper.Game.Characters
 
         private readonly ILog log = LogManager.GetLogger(typeof(Character));
 
+        /// <summary>
+        /// Creates a new instance of the Character class.
+        /// </summary>
+        /// <param name="id">object ID of this Character</param>
+        /// <param name="name">this Character's name</param>
+        /// <param name="actionButtons">a list of ActionButton objects for this Character</param>
+        /// <param name="spells">a list of Spells known to this Character</param>
         public Character(ObjectID id, string name, IList<ActionButton> actionButtons, IList<Spell> spells) : base(id, ObjectTypeID.Player, (ushort)CharacterFields.END)
         {
             ActionButtons = actionButtons;
@@ -40,42 +47,75 @@ namespace Whisper.Game.Characters
             FirstLogin = false;
         }
 
+        /// <summary>
+        /// Gets the name of the Character.
+        /// </summary>
         public string Name
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets or sets the current Zone ID of the Character.
+        /// </summary>
         public int ZoneID
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Gets or sets the bind point for this Character.
+        /// </summary>
         public OrientedVector3 BindPoint
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Gets a list of this Character's ActionButtons.
+        /// </summary>
         public IList<ActionButton> ActionButtons
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets a list of Spells known to this Character.
+        /// </summary>
         public IList<Spell> Spells
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets or sets whether this is the first time this Character has logged into the Shard.
+        /// </summary>
         public bool FirstLogin
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Gets the unit that this Character is controlling. This is typically the same instance as the Character itself.
+        /// </summary>
+        public Unit Control
+        {
+            get
+            {
+                return this;
+            }
+        }
+
+        /// <summary>
+        /// Initializes this Character before it is added to the Shard for the first time.
+        /// </summary>
+        /// <param name="world">static world store</param>
         public override void Initialize(World.World world)
         {
             base.Initialize(world);
@@ -125,6 +165,10 @@ namespace Whisper.Game.Characters
             Spirit = cbs.Spirit;
         }
 
+        /// <summary>
+        /// Returns the name of this Character.
+        /// </summary>
+        /// <returns>the name of this Character</returns>
         public override string ToString()
         {
             return Name;
