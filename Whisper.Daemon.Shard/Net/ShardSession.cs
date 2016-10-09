@@ -116,7 +116,7 @@ namespace Whisper.Daemon.Shard.Net
         {
             Cipher.Initialize(sessionKey);
         }
-        
+
         /// <summary>
         /// Updates the state of the ShardSession to represent that the given amount of game time has passed.
         /// </summary>
@@ -127,91 +127,87 @@ namespace Whisper.Daemon.Shard.Net
             World world = Server.World;
             Game.World.Shard shard = Server.Shard;
 
-            // update aware objects
-            using (UpdateData ud = new UpdateData())
+            // go through objects in map
+            foreach (GameObject go in shard.GetObjects(Player.MapID))
             {
-                // go through objects in map
-                foreach (GameObject go in shard.GetObjects(Player.MapID))
+                if (Awareness.Contains(go))
                 {
-                    if (Awareness.Contains(go))
+                    // update, remove, or do nothing
+                    if (go.Position.Distance(Player.Position) < world.ViewDistance)
                     {
-                        // update, remove, or do nothing
-                        if(go.Position.Distance(Player.Position) < world.ViewDistance)
+                        // update or do nothing
+                        if (go.ChangeState != ObjectChangeState.None)
                         {
-                            // update or do nothing
-                            if(go.ChangeState != ObjectChangeState.None)
-                            {
-                                // update
-                                using (UpdateData ud2 = new UpdateData())
-                                {
-                                    go.BuildTargetedUpdate(ud2, Player);
-                                    using (ByteBuffer packet = new ByteBuffer())
-                                    {
-                                        ud2.Append(packet);
-                                        Send(ShardServerOpcode.ObjectUpdate, packet);
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // remove
-                            RemoveAwareObject(go, ud);
+                            // update
+                            UpdateAwareObject(go);
                         }
                     }
                     else
                     {
-                        // add or do nothing
-                        if (go.Position.Distance(Player.Position) < world.ViewDistance)
-                        {
-                            // add
-                            using (UpdateData ud2 = new UpdateData())
-                            {
-                                go.BuildTargetedCreationUpdate(ud2, Player);
-                                using (ByteBuffer packet = new ByteBuffer())
-                                {
-                                    ud2.Append(packet);
-                                    Send(ShardServerOpcode.ObjectUpdate, packet);
-                                }
-                            }
-                            AddAwareObject(go, ud);
-                        }
+                        // remove
+                        RemoveAwareObject(go);
                     }
                 }
-
-                // next, go through objects in awareness set, in case any don't have the correct map ID, and remove them
-                ISet<GameObject> removalSet = new HashSet<GameObject>();
-                foreach(GameObject go in Awareness)
+                else
                 {
-                    if (go.MapID != Player.MapID)
-                        removalSet.Add(go);
-                }
-
-                foreach(GameObject go in removalSet)
-                {
-                    // remove
-                    RemoveAwareObject(go, ud);
-                }
-
-                /*if(!ud.IsEmpty)
-                {
-                    using (ByteBuffer packet = new ByteBuffer())
+                    // add or do nothing
+                    if (go.Position.Distance(Player.Position) < world.ViewDistance)
                     {
-                        ud.Append(packet);
-                        Send(ShardServerOpcode.ObjectUpdate, packet);
+                        // add
+                        AddAwareObject(go);
                     }
-                }*/
+                }
+            }
+
+            // next, go through objects in awareness set, in case any don't have the correct map ID, and remove them
+            ISet<GameObject> removalSet = new HashSet<GameObject>();
+            foreach (GameObject go in Awareness)
+            {
+                if (go.MapID != Player.MapID)
+                    removalSet.Add(go);
+            }
+
+            foreach (GameObject go in removalSet)
+            {
+                // remove
+                RemoveAwareObject(go);
             }
         }
 
-        private void AddAwareObject(GameObject gameObject, UpdateData updateData)
+        private void UpdateAwareObject(GameObject gameObject)
         {
-            gameObject.BuildTargetedCreationUpdate(updateData, Player);
+            log.DebugFormat("{0} is aware of object {1} changing", Player, gameObject);
+
+            using (ByteBuffer packet = new ByteBuffer())
+            using (UpdateData updateData = new UpdateData())
+            {
+                gameObject.BuildTargetedUpdate(updateData, Player);
+                updateData.Append(packet);
+
+                Send(ShardServerOpcode.ObjectUpdate, packet);
+            }
+        }
+
+        private void AddAwareObject(GameObject gameObject)
+        {
+            log.DebugFormat("{0} became aware of object {1}", Player, gameObject);
+
+            using (ByteBuffer packet = new ByteBuffer())
+            using (UpdateData updateData = new UpdateData())
+            {
+                gameObject.BuildTargetedCreationUpdate(updateData, Player);
+                updateData.Append(packet);
+
+                Send(ShardServerOpcode.ObjectUpdate, packet);
+            }
+
             Awareness.Add(gameObject);
         }
 
-        private void RemoveAwareObject(GameObject gameObject, UpdateData updateData)
+        private void RemoveAwareObject(GameObject gameObject)
         {
+            log.DebugFormat("{0} lost awareness of object {1}", Player, gameObject);
+
             if (Awareness.Contains(gameObject))
             {
                 Awareness.Remove(gameObject);
