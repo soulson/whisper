@@ -142,7 +142,15 @@ namespace Whisper.Daemon.Shard.Net
                             if(go.ChangeState != ObjectChangeState.None)
                             {
                                 // update
-                                go.BuildTargetedUpdate(ud, Player);
+                                using (UpdateData ud2 = new UpdateData())
+                                {
+                                    go.BuildTargetedUpdate(ud2, Player);
+                                    using (ByteBuffer packet = new ByteBuffer())
+                                    {
+                                        ud2.Append(packet);
+                                        Send(ShardServerOpcode.ObjectUpdate, packet);
+                                    }
+                                }
                             }
                         }
                         else
@@ -157,7 +165,15 @@ namespace Whisper.Daemon.Shard.Net
                         if (go.Position.Distance(Player.Position) < world.ViewDistance)
                         {
                             // add
-                            go.BuildTargetedCreationUpdate(ud, Player);
+                            using (UpdateData ud2 = new UpdateData())
+                            {
+                                go.BuildTargetedCreationUpdate(ud2, Player);
+                                using (ByteBuffer packet = new ByteBuffer())
+                                {
+                                    ud2.Append(packet);
+                                    Send(ShardServerOpcode.ObjectUpdate, packet);
+                                }
+                            }
                             AddAwareObject(go, ud);
                         }
                     }
@@ -177,14 +193,14 @@ namespace Whisper.Daemon.Shard.Net
                     RemoveAwareObject(go, ud);
                 }
 
-                if(!ud.IsEmpty)
+                /*if(!ud.IsEmpty)
                 {
                     using (ByteBuffer packet = new ByteBuffer())
                     {
                         ud.Append(packet);
                         Send(ShardServerOpcode.ObjectUpdate, packet);
                     }
-                }
+                }*/
             }
         }
 
