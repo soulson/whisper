@@ -78,6 +78,18 @@ namespace Whisper.Game.World
         }
 
         /// <summary>
+        /// Returns true if and only if the given GameObject exists in this Shard.
+        /// </summary>
+        /// <param name="gameObject">GameObject to test</param>
+        /// <returns>as described</returns>
+        public bool Exists(GameObject gameObject)
+        {
+            return GameObjects.Contains(gameObject)
+                || Units.Contains(gameObject)
+                || Characters.Contains(gameObject);
+        }
+
+        /// <summary>
         /// Gets the World that this Shard is an instance of.
         /// </summary>
         public World World

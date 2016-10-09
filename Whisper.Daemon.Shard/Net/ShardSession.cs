@@ -159,11 +159,13 @@ namespace Whisper.Daemon.Shard.Net
                 }
             }
 
-            // next, go through objects in awareness set, in case any don't have the correct map ID, and remove them
+            // next, go through objects in awareness set, in case any don't have the correct map ID or no longer exist, and remove them
             ISet<GameObject> removalSet = new HashSet<GameObject>();
             foreach (GameObject go in Awareness)
             {
                 if (go.MapID != Player.MapID)
+                    removalSet.Add(go);
+                else if (!Server.Shard.Exists(go))
                     removalSet.Add(go);
             }
 
