@@ -109,6 +109,7 @@
     <Compile Include="Commands\QueryTimeCommand.cs" />
     <Compile Include="Commands\SetControlledUnitCommand.cs" />
     <Compile Include="Commands\SupportTicketQueryCommand.cs" />
+    <Compile Include="Commands\ZoneUpdateCommand.cs" />
     <Compile Include="Config\ShardConfig.cs" />
     <Compile Include="Database\CharacterDao.cs" />
     <Compile Include="Lookup\AuthResponse.cs" />

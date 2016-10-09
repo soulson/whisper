@@ -51,6 +51,7 @@ namespace Whisper.Daemon.Shard.Lookup
         QueryTime = 0x01ce,
         Ping = 0x01dc,
         AuthSession = 0x01ed,
+        ZoneUpdate = 0x01f4,
         AccountDataUpdate = 0x020b,
         SupportTicketQuery = 0x0211,
         SetControlledUnit = 0x026a,
