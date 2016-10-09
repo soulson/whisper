@@ -190,16 +190,16 @@ namespace Whisper.Daemon.Shard.Net
 
         private void AddAwareObject(GameObject gameObject, UpdateData updateData)
         {
-            Awareness.Add(gameObject);
             gameObject.BuildTargetedCreationUpdate(updateData, Player);
+            Awareness.Add(gameObject);
         }
 
         private void RemoveAwareObject(GameObject gameObject, UpdateData updateData)
         {
             if (Awareness.Contains(gameObject))
             {
-                // TODO: send object remove update
                 Awareness.Remove(gameObject);
+                Send(ShardServerOpcode.ObjectDestroy, BitConverter.GetBytes(gameObject.ID.LongForm));
             }
             else
                 log.WarnFormat("{0} called on session for player {1} with unknown object ID {2}", nameof(RemoveAwareObject), Player.Name, gameObject.ID);

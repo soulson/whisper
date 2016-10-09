@@ -51,6 +51,7 @@ namespace Whisper.Daemon.Shard.Lookup
         FriendStatus = 0x0068,
         IgnoreList = 0x006b,
         ObjectUpdate = 0x00a9,
+        ObjectDestroy = 0x00aa,
         TriggerCinematic = 0x00fa,
         LoginTutorialFlags = 0x00fd,
         LoginInitializeFactions = 0x0122,
