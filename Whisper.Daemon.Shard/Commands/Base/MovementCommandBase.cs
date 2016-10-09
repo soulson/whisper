@@ -97,6 +97,7 @@ namespace Whisper.Daemon.Shard.Commands.Base
             // TODO: verify that client isn't sending bogus data
             session.Player.Control.MovementFlags = header.Flags & ~(MovementFlags.ModeFalling | MovementFlags.ModeSwimming | MovementFlags.OnTransport);
             session.Player.Control.Position = header.Position;
+            session.Player.Control.MovementTime = header.Time;
         }
     }
 }

@@ -663,6 +663,12 @@ namespace Whisper.Game.Units
             get;
             private set;
         }
+
+        public uint MovementTime
+        {
+            get;
+            set;
+        }
         #endregion
 
         #region Fields Management
@@ -727,11 +733,10 @@ namespace Whisper.Game.Units
 
         protected override void AppendMovementUpdate(ByteBuffer buffer, ObjectUpdateType updateType, ObjectUpdateFlags updateFlags)
         {
-
             if ((updateFlags & ObjectUpdateFlags.Living) != 0)
             {
                 buffer.Append((int)MovementFlags);
-                buffer.Append(0); // time
+                buffer.Append(MovementTime); // time
                 buffer.Append(Position);
                 buffer.Append(0); // fallingTime
 
@@ -742,7 +747,7 @@ namespace Whisper.Game.Units
                 buffer.Append(MovementSpeed.SwimmingBack);
                 buffer.Append(MovementSpeed.Turning);
 
-                // remove HasPosition from the updateFlags when passing to GameObject, since Living already wrote the position
+                // remove HasPosition from the updateFlags when passing to GameObject, since we already wrote the position
                 base.AppendMovementUpdate(buffer, updateType, updateFlags & ~ObjectUpdateFlags.HasPosition);
             }
             else
