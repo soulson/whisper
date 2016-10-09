@@ -19,11 +19,15 @@
 using System;
 using Whisper.Game.Objects;
 using Whisper.Shared.Utility;
+using log4net;
+using System.Collections.Generic;
 
 namespace Whisper.Game.Units
 {
     public class Unit : GameObject
     {
+        private readonly ILog log = LogManager.GetLogger(typeof(Unit));
+
         private bool movementFlagsUpdated;
         private MovementFlags movementFlags;
 
@@ -658,6 +662,12 @@ namespace Whisper.Game.Units
             }
         }
 
+        public MovementFlags OldMovementFlags
+        {
+            get;
+            private set;
+        }
+
         public MovementSpeed MovementSpeed
         {
             get;
@@ -725,6 +735,8 @@ namespace Whisper.Game.Units
 
         public override void ClearChangeState()
         {
+            OldMovementFlags = MovementFlags;
+
             base.ClearChangeState();
 
             MovementSpeed.ClearChangeState();
@@ -735,6 +747,8 @@ namespace Whisper.Game.Units
         {
             if ((updateFlags & ObjectUpdateFlags.Living) != 0)
             {
+                log.DebugFormat("appending movement update with movementflags = {0}", MovementFlags);
+
                 buffer.Append((int)MovementFlags);
                 buffer.Append(MovementTime); // time
                 buffer.Append(Position);

@@ -27,6 +27,7 @@ using Whisper.Daemon.Shard.Lookup;
 using Whisper.Daemon.Shard.Security;
 using Whisper.Game.Characters;
 using Whisper.Game.Objects;
+using Whisper.Game.Units;
 using Whisper.Game.World;
 using Whisper.Shared.Net;
 using Whisper.Shared.Utility;
@@ -187,6 +188,61 @@ namespace Whisper.Daemon.Shard.Net
                 updateData.Append(packet);
 
                 Send(ShardServerOpcode.ObjectUpdate, packet);
+            }
+
+            // protip: don't send movement updates to yourself
+            if (gameObject is Unit && gameObject != Player)
+            {
+                Unit unit = gameObject as Unit;
+                ISet<ShardServerOpcode> opcodes = new HashSet<ShardServerOpcode>();
+
+                if ((unit.MovementFlags & MovementFlags.MoveMask) != 0 && unit.OldMovementFlags == unit.MovementFlags)
+                {
+                    // heartbeat
+                    opcodes.Add(ShardServerOpcode.MoveHeartbeat);
+                }
+                else
+                {
+                    // complicated
+                    if ((unit.MovementFlags & MovementFlags.MoveLeft) != 0 && (unit.OldMovementFlags & MovementFlags.MoveLeft) == 0)
+                        opcodes.Add(ShardServerOpcode.MoveStrafeStartLeft);
+                    else if ((unit.MovementFlags & MovementFlags.MoveRight) != 0 && (unit.OldMovementFlags & MovementFlags.MoveRight) == 0)
+                        opcodes.Add(ShardServerOpcode.MoveStrafeStartRight);
+                    else if ((unit.MovementFlags & (MovementFlags.MoveLeft | MovementFlags.MoveRight)) == 0 && (unit.OldMovementFlags & (MovementFlags.MoveLeft | MovementFlags.MoveRight)) != 0)
+                        opcodes.Add(ShardServerOpcode.MoveStrafeStop);
+
+                    if ((unit.MovementFlags & MovementFlags.MoveForward) != 0 && (unit.OldMovementFlags & MovementFlags.MoveForward) == 0)
+                        opcodes.Add(ShardServerOpcode.MoveStartForward);
+                    else if ((unit.MovementFlags & MovementFlags.MoveBackward) != 0 && (unit.OldMovementFlags & MovementFlags.MoveBackward) == 0)
+                        opcodes.Add(ShardServerOpcode.MoveStartBackward);
+                    else if ((unit.MovementFlags & (MovementFlags.MoveForward | MovementFlags.MoveBackward)) == 0 && (unit.OldMovementFlags & (MovementFlags.MoveForward | MovementFlags.MoveBackward)) != 0)
+                        opcodes.Add(ShardServerOpcode.MoveStop);
+
+                    if ((unit.MovementFlags & MovementFlags.TurnLeft) != 0 && (unit.OldMovementFlags & MovementFlags.TurnLeft) == 0)
+                        opcodes.Add(ShardServerOpcode.MoveTurnStartLeft);
+                    else if ((unit.MovementFlags & MovementFlags.TurnRight) != 0 && (unit.OldMovementFlags & MovementFlags.TurnRight) == 0)
+                        opcodes.Add(ShardServerOpcode.MoveTurnStartRight);
+                    else if ((unit.MovementFlags & (MovementFlags.TurnLeft | MovementFlags.TurnRight)) == 0 && (unit.OldMovementFlags & (MovementFlags.TurnLeft | MovementFlags.TurnRight)) != 0)
+                        opcodes.Add(ShardServerOpcode.MoveTurnStop);
+                }
+
+                if (opcodes.Count > 0)
+                {
+                    using (ByteBuffer buf = new ByteBuffer())
+                    {
+                        buf.Append(unit.ID.GetPacked());
+
+                        // TODO: extract this movement write into a class, since it shows up in a few different places
+                        // TODO: while you do that, consider implementing some of these other movement modes
+                        buf.Append((int)(unit.MovementFlags & ~(MovementFlags.ModeSwimming | MovementFlags.OnTransport | MovementFlags.ModeFalling)));
+                        buf.Append(unit.MovementTime);
+                        buf.Append(unit.Position);
+                        buf.Append(0); // fall time
+
+                        foreach (ShardServerOpcode opcode in opcodes)
+                            Send(opcode, buf);
+                    }
+                }
             }
         }
 

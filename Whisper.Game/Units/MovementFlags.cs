@@ -48,6 +48,8 @@ namespace Whisper.Game.Units
         Root = 0x08000000,
         ModeWaterWalking = 0x10000000,
         SafeFall = 0x20000000,
-        ModeHover = 0x40000000
+        ModeHover = 0x40000000,
+
+        MoveMask = MoveForward | MoveBackward | MoveLeft | MoveRight | TurnLeft | TurnRight,
     };
 }
