@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Characters\ActionButton.cs" />
     <Compile Include="Characters\CharacterBaseStats.cs" />
+    <Compile Include="Maps\MapTile.cs" />
     <Compile Include="Objects\ModelDefinition.cs" />
     <Compile Include="Objects\ObjectChangeState.cs" />
     <Compile Include="Units\RaceDefinition.cs" />
